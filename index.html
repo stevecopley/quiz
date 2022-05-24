@@ -1,0 +1,73 @@
+<!doctype html>
+
+<html>
+    
+<head>
+    <title>DT Quizzes</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/prism.css">
+    <link rel="stylesheet" href="css/styles.css">
+
+    <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>    
+    <script src="scripts/quiz.js"></script>
+</head>
+
+<body>
+    <header id="main-header">
+
+        <h1>DT Quizzes</h1>
+
+        <nav id="main-nav">
+            <label for="toggle"><img src="images/menu.svg"></label>
+            <input id="toggle" type="checkbox">
+
+            <ul id="main-nav-links">
+                <label for="toggle"><img src="images/close.svg"></label>
+                <label id="overlay" for="toggle"></label>
+                <li class="main-nav-section"></li>
+            </ul>
+        </nav>
+
+    </header>
+
+    <main>
+        <h1 id="title"></h1>
+
+        <article id="info" class="hide">
+            <p>Select a quiz from the menu...</p>
+        </article>
+
+        <article id="quiz" class="hide">
+            <nav id="progress">
+                <div id="prev-question"><img src="images/left.svg" alt="previous icon"></div>
+                <ol id="question-markers"></ol>
+                <div id="next-question"><img src="images/right.svg" alt="next icon"></div>
+            </nav>
+    
+            <section id="question-container">
+                <div id="question"></div>
+                <div id="answers"></div>
+            </section>    
+        </article>
+
+        <article id="feedback" class="hide">
+            <section id="correct">Correct! Well done!</section>
+            <section id="wrong">Nope! Try again...</section>
+            <section id="feedback-message"></section>
+        </article>
+
+        <script>initialiseQuiz();</script>
+        <script>window.Prism = window.Prism || {}; window.Prism.manual = true;</script>
+        <script src="scripts/prism.js"></script>
+    </main>
+        
+</body>
+
+</html>
+

@@ -1,0 +1,16 @@
+{
+    "Python Quizzes": {
+        "Python 1: Input and Output": "python/inout.md",
+        "Python 2: Variables": "python/variables.md",
+        "Python 3: Branching": "python/branching.md",
+        "Python 4: Looping": "python/loops.md"
+    },
+    "HTML Quizzes": {
+        "HTML 1: Basics": "html/basics.md",
+        "HTML 2: Blocks": "html/blocks.md"
+    },
+    "CSS Quizzes": {
+        "CSS 1: Basics": "css/basics.md",
+        "CSS 2: Layout": "css/variables.md"
+    }
+}
