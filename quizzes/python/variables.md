@@ -27,7 +27,7 @@ You will be asked to either *predict* what it does, or to suggest  *changes* tha
 
 --
 
-### Notes About Variables
+### Notes on Variables
 
 * To create a variable called *age* and set its value to the number *7*, you would write: `age = 7`
 * To create a variable called *name* and set its value to the text string *Bob*, you would write: `name = "Bob"` (note the speech marks around the text)

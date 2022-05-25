@@ -1,8 +1,14 @@
 # Python Branching
 
+--
+
+python
+
 ---
 
 ## Introduction
+
+This quiz focuses on Python commands that allow your program to make decisions as to what to do next (we call this 'branching'). 
 
 In each question you will be shown a short snippet of Python code, like this:
 
@@ -15,13 +21,12 @@ You will be asked to either *predict* what it does, or to suggest  *changes* tha
 
 --
 
-### What's in this Quiz?
-
-This quiz focuses on Python commands that allow your program to make decisions (we call this 'branching' code): 
+### Notes on Branching:
 
 * `if` - simple decision
 * `if ... else` - a simple decision with two branches
 * `if ... elif ... else` - multiple decisions and branches
+
 
 ---
 
@@ -44,6 +49,63 @@ print( "Hello World!" )
 --
 
 1
+
+--
+
+This is a very common use of the `print()` command, showing a string (text) to the user. 
+
+Strings must have speechmarks at the start and end: "..." or '...'
+
+
+---
+
+## Question 2
+
+The `print()` command is used to display information on the screen for the user. Take a look at this code...
+
+```python
+print( "Hello World!" )
+```
+
+--
+
+### What will the code do?
+
+1. It will show the text `Hello World!`
+
+--
+
+1
+
+--
+
+This is a very common use of the `print()` command, showing a string (text) to the user. 
+
+Strings must have speechmarks at the start and end: "..." or '...'
+
+
+---
+
+## Question 3
+
+The `print()` command is used to display information on the screen for the user. Take a look at this code...
+
+```python
+print( "Hello World!" )
+```
+
+--
+
+### What will the code do?
+
+1. It will show the text `Hello World!`
+2. It will ask a question
+3. It will display an error
+4. It will do nothing
+
+--
+
+2
 
 --
 

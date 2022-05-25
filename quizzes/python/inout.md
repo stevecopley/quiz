@@ -21,7 +21,7 @@ You will be asked to either *predict* what it does, or to suggest  *changes* tha
 
 --
 
-### Notes About Input and Output
+### Notes on Input and Output
 
 The `print()` command is used to *output* (show) information to the user:
 
@@ -31,8 +31,8 @@ The `print()` command is used to *output* (show) information to the user:
 
 The `input()` command is used to *input* (ask for) information from the user:
 
-* To ask the user for their name, you would write: `name = input( "What is your name? " )` (note that a *variable* is needed to store the response from the user, in this case *name*)
-* To ask the user for their age, you would write: `age = int( input( "How old are you? " ) )` (note that the `int()` command is used to convert the input into an actual *integer* number)
+* To ask the user for their name, you would write: `name = input( "Name: " )` (note that a *variable* is needed to store the response from the user, in this case *name*)
+* To ask the user for their age, you would write: `age = int( input( "Age: " ) )` (note that the `int()` command is used to convert the input into an actual *integer* number)
 
 
 ---

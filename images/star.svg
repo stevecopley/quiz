@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 18 18" width="18px" height="18px" xmlns="http://www.w3.org/2000/svg">
+  <path fill="none" d="M 0 0 L 18 0 L 18 18 L 0 18 L 0 0 Z"/>
+  <path d="M 9 13.695 L 3.71 16.656 L 4.892 10.71 L 0.44 6.594 L 6.461 5.88 L 9 0.375 L 11.54 5.88 L 17.56 6.594 L 13.108 10.71 L 14.29 16.656 L 9 13.695 Z" fill="#fdd835"/>
+  <path d="M 9 11.976 L 12.185 13.759 L 11.474 10.179 L 14.153 7.7 L 10.529 7.27 L 9 3.956 L 7.471 7.271 L 3.847 7.7 L 6.527 10.179 L 5.815 13.759 L 9 11.976 Z" style="fill: #ffeb3b;"/>
+</svg>

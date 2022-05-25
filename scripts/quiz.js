@@ -12,6 +12,9 @@ showdown.setOption( 'customizedHeaderId', true );
 const converter = new showdown.Converter();
 
 
+/** ***************************************************************
+ * 
+ */
 async function initialiseQuiz() {
     loadQuizList();
 
@@ -24,6 +27,10 @@ async function initialiseQuiz() {
 }
 
 
+/** ***************************************************************
+ * 
+ * @returns 
+ */
 async function loadQuizList() {
     const title = document.getElementById( 'title' );
     const infoBlock = document.getElementById( 'info' );
@@ -70,6 +77,11 @@ async function loadQuizList() {
 }
 
 
+/** ***************************************************************
+ * 
+ * @param {*} url 
+ * @returns 
+ */
 async function loadQuiz( url ) {
     const title = document.getElementById( 'title' );
     const infoBlock = document.getElementById( 'info' );
@@ -82,11 +94,14 @@ async function loadQuiz( url ) {
         return;
     }
 
-    // Tidy up
+    // Save the fact that we're doing this quiz
+    sessionStorage.setItem( 'currentQuiz', url );
+
+    // Tidy up the display
     closeMenu();
     infoBlock.className = 'hide';
 
-    // Break it up based on HRs
+    // Break up the quiz MD based on HRs
     mdBlocks = quizMD.split( '---' );
 
     // First block contains our title as an H1 and other info, seperated by '--'?
@@ -108,24 +123,46 @@ async function loadQuiz( url ) {
         parts = block.trim().split( '--' );
 
         // First part is always the question
-        let question = { 'question': parts[0].trim() };
+        let question = { 'questionMD': parts[0].trim() };
         // Second is always the answers (if present)
-        if( parts[1] ) question['answers'] = parts[1].trim();
+        if( parts[1] ) {
+            question['answersMD'] = parts[1].trim();
+            // MD to HTML to be able to count the number of answers easily by no. of <li> tags
+            const questionsHTML = converter.makeHtml( question.answersMD );
+            question['answerCount'] = 0;
+            // Does answer have an ordered list of answers in it? If so, count the list items (assumes only a single list!)
+            if( questionsHTML.includes( '<ol>' ) ) question['answerCount'] = questionsHTML.split( '<li>' ).length - 1;
+        }
         // Third is always the correct answer (if present)
-        if( parts[2] ) question['correct'] = parseInt( parts[2].trim() );
+        if( parts[2] ) question['correctAnswer'] = parseInt( parts[2].trim() );
         // Forth is always the feedback (if present)
-        if( parts[3] ) question['feedback'] = parts[3].trim();
+        if( parts[3] ) question['feedbackMD'] = parts[3].trim();
+
         // And add it to the question list
         quiz.questions.push( question );
     } );
 
+    console.log( quiz );
+
+    // Get the question progress stats ready to use
+    setupQuestionProgress();
+
     // Build the progress bar
     buildQuestionNav();
 
-    sessionStorage.setItem( 'currentQuiz', url );
-    showQuestion( sessionStorage.getItem( 'currentQuestion' ) ? sessionStorage.getItem( 'currentQuestion' ) : 0 );
+    // And show the relevant question (continuing where we left off if saved)
+    const currentQuestion = sessionStorage.getItem( 'currentQuestion' );
+    showQuestion( currentQuestion !== null ? currentQuestion : 0 );
 }
 
+
+
+/** ***************************************************************
+ * Loads a given markdown file
+ * 
+ * @param {string} url the URL of the markdown file to load
+ * @returns the MD text from the file, null otherwise
+ */
 async function getMarkdown( url ) {
     const response = await fetch( url );
     if( response.status !== 200 ) return null;
@@ -134,6 +171,12 @@ async function getMarkdown( url ) {
 }
 
 
+/** ***************************************************************
+ * Loads a given JSON file
+ * 
+ * @param {string} url the URL of the JSON file to load
+ * @returns the JSON object obtained from the file, null otherwise
+ */
 async function getJSON( url ) {
     const response = await fetch( url );
     if( response.status !== 200 ) return null;
@@ -142,6 +185,12 @@ async function getJSON( url ) {
 }
 
 
+/** ***************************************************************
+ * Triggers a close of the menu after an option has been selected. For the mobile
+ * menu, this is simply a case of unticking the checkbox that controls the menu
+ * visibility (via CSS). For the desktop menu which relies on hover states, it's a
+ * bit more clunky... Turn off mouse events to 'unhover', then back on again
+ */
 function closeMenu() {
     // Close the mobile menu
     const menuToggle = document.getElementById( 'toggle' );
@@ -157,45 +206,101 @@ function closeMenu() {
     } );
 }
 
+
+/** ***************************************************************
+ * Setup the question nav progress bar, based on the number of questions
+ * in the current quiz. The first marker is always assumed to be an intro
+ * so displays an (i) symbol. otherwise it's a question. This results in
+ * Q1 having an index of 1, Q2, index of 2, etc.
+ * 
+ * Click event handlers are added to each question marker to show the question,
+ * and to the next / previous markers
+ */
 function buildQuestionNav() {
     const questionMarkers = document.getElementById( 'question-markers' );
+    // Scrub any previous markers
     questionMarkers.innerHTML = '';
 
     // Work through all the questions in the list
     for( let i = 0; i < quiz.questions.length; i++ ) {
+        // Let's make a new marker
         const questionIndicator = document.createElement( 'li' );
+
         if( i == 0 ) {
+            // This is the intro, so we have an icon
             const icon = document.createElement( 'img' );
             icon.src = 'images/info.svg';
             questionIndicator.appendChild( icon );
         }
         else {
+            // An actual question, so show the number
             questionIndicator.innerHTML = i;
+
+            // Setup the appropriate amount of stars for the question
+            const starBlock = document.createElement( 'div' );
+            starBlock.className = 'stars has0';
+            questionIndicator.appendChild( starBlock );
+            let starsHTML = '';
+            if( quiz.questions[i].answerCount >= 1 ) starsHTML += '<div class="star"></div>';
+            if( quiz.questions[i].answerCount >= 2 ) starsHTML += '<div class="star"></div>';
+            if( quiz.questions[i].answerCount >= 3 ) starsHTML += '<div class="star"></div>';
+            if( quiz.questions[i].answerCount >= 4 ) starsHTML += '<div class="star"></div>';
+            starBlock.innerHTML = starsHTML;
         }
+
+        // Click event handlers
         questionIndicator.addEventListener( 'click', () => { showQuestion( i ); } );
+
+        // And tack on the new marker
         questionMarkers.appendChild( questionIndicator );
+
+        // Show the correct amount of previously earned stars (if any )
+        if( i > 0 ) updateQuestionStars( i );
     }
 
     // Link to go to previous question
     const prevIndicator = document.getElementById( 'prev-question' );
-    prevIndicator.addEventListener( 'click', prevQuestion );
+    if( prevIndicator.getAttribute( 'hasListener' ) != 'true' ) {
+        prevIndicator.addEventListener( 'click', () => { showQuestionWithOffset( -1 ); } );
+        prevIndicator.setAttribute( 'hasListener', 'true' );
+    }
 
     // Link to go to next question
     const nextIndicator = document.getElementById( 'next-question' );
-    nextIndicator.addEventListener( 'click', nextQuestion );
+    if( nextIndicator.getAttribute( 'hasListener' ) != 'true' ) {
+        nextIndicator.addEventListener( 'click', () => { showQuestionWithOffset( 1 ); } );
+        nextIndicator.setAttribute( 'hasListener', 'true' );
+    }
 }
 
 
-function prevQuestion() {
-    if( currentQuestion > 0 ) showQuestion( currentQuestion - 1 );
+/** ***************************************************************
+ * Switch to another question based on a given offset from the current question
+ * 
+ * @param {number} offset the offset to add to the current question, e.g. -1 
+ */
+function showQuestionWithOffset( offset ) {
+    // Do we know where we are already?
+    let currentQuestion = sessionStorage.getItem( 'currentQuestion' );
+    currentQuestion = currentQuestion === null ? 0 : parseInt( currentQuestion );
+    
+    // Where are we going to?
+    let questionToShow = currentQuestion + offset;
+    // Force into valid range
+    questionToShow = Math.min( Math.max( 0, questionToShow ), quiz.questions.length - 1 );
+
+    // And off we go
+    showQuestion( questionToShow );
 }
 
 
-function nextQuestion() {
-    if( currentQuestion < quiz.questions.length - 1 ) showQuestion( currentQuestion + 1 );
-}
-
-
+/** ***************************************************************
+ * Displays the given question to the user, coniguring the answers with click
+ * event handlers, updating the progress nav, and storing the progress in
+ * the session
+ * 
+ * @param {number} qNum the question to display
+ */
 function showQuestion( qNum ) {
     const quizBlock = document.getElementById( 'quiz' );
     const quesBlock = document.getElementById( 'question' );
@@ -213,9 +318,9 @@ function showQuestion( qNum ) {
     const question = quiz.questions[qNum];
 
     // Show it to the user
-    quesBlock.innerHTML = converter.makeHtml( question['question'] );
-    answBlock.innerHTML = question['answers'] ? converter.makeHtml( question['answers'] ) : '';
-    message.innerHTML = question['feedback'] ? converter.makeHtml( question['feedback'] ) : '';
+    quesBlock.innerHTML = question.questionMD ? converter.makeHtml( question.questionMD ) : 'MISSING QUESTION TEXT';
+    answBlock.innerHTML = question.answersMD  ? converter.makeHtml( question.answersMD )  : '';
+    message.innerHTML   = question.feedbackMD ? converter.makeHtml( question.feedbackMD ) : '';
 
     // Sort out the syntax highlighting for inline as well as blocks of code
     const codeBlocks = document.querySelectorAll( 'code' );
@@ -225,22 +330,115 @@ function showQuestion( qNum ) {
     } );
     Prism.highlightAll();
 
-    // Add event handlers to answers
-    const answers = answBlock.querySelectorAll( 'li' );
-    for( let i = 0; i < answers.length; i++ ) {
-        answers[i].addEventListener( 'click', () => { checkAnswer( i + 1 ); } );
+    // Add event handlers to answers, but not for intro (qNum 0)
+    if( qNum > 0 ) {
+        const answers = answBlock.querySelectorAll( 'li' );
+        const numAnswers = answers.length;
+        for( let i = 0; i < numAnswers; i++ ) {
+            answers[i].addEventListener( 'click', () => { checkAnswer( qNum, i + 1 ); } );
+        }
     }
 
     // Update progress bar
     updateQuestionNav( qNum );
 
+    // If questions answered already, update the UI of the answers
+    if( getQuestionProgress( qNum ) > 0 ) {
+        setAnswerState( qNum, question.correctAnswer, true );
+        showFeedback( qNum );
+    }
+
     // Save where we're at
-    currentQuestion = qNum;  
     sessionStorage.setItem( 'currentQuestion', qNum );      
 }
 
 
-function updateQuestionNav( qNum ) {
+
+function setupQuestionProgress() {
+    // Attempt to get progress from session
+    let progress = sessionStorage.getItem( 'progress' );
+    if( progress ) progress = JSON.parse( progress );
+    else           progress = {};
+
+    // Attempt to get the URL of current quiz. Bail out if missing
+    const currentQuiz = sessionStorage.getItem( 'currentQuiz' );
+    if( !currentQuiz ) return;
+
+    // Tracking our progress for this quiz already? If not, create a record
+    if( !progress || !progress[currentQuiz] ) progress[currentQuiz] = {};
+
+    // Work through the questions in the quiz object (setup from loading quiz), excluding intro at index 0
+    for (let i = 1; i < quiz.questions.length; i++) {
+        // Do we have info for this ques already? If not, create record. Also do this if num ans has chnaged
+        if( !progress[currentQuiz][i] || progress[currentQuiz][i].answers != quiz.questions[i].answerCount ) {
+            progress[currentQuiz][i] = {
+                "answers": quiz.questions[i].answerCount,
+                "correct": false,
+                "attempts": 0
+            }
+        }
+    }
+
+    // Save back into the session
+    sessionStorage.setItem( 'progress', JSON.stringify( progress ) );
+}
+
+
+
+function updateQuestionProgress( qNum, isCorrect ) {
+    // Attempt to get the URL of current quiz. 
+    const currentQuiz = sessionStorage.getItem( 'currentQuiz' );
+    // Attempt to get progress from session
+    let progress = sessionStorage.getItem( 'progress' );
+    // Bail out if anything amiss
+    if( !progress || !currentQuiz ) return;
+    
+    // JSONify it
+    progress = JSON.parse( progress );
+    // Bail out if anything amiss
+    if( !progress[currentQuiz] || !progress[currentQuiz][qNum] ) return;
+
+    // Set ques status
+    if( progress[currentQuiz][qNum].attempts < progress[currentQuiz][qNum].answers ) progress[currentQuiz][qNum].attempts++;    
+    progress[currentQuiz][qNum].correct = isCorrect;
+
+    // Save back into the session
+    sessionStorage.setItem( 'progress', JSON.stringify( progress ) );
+}
+
+
+function getQuestionProgress( qNum ) {
+    // Attempt to get the URL of current quiz. 
+    const currentQuiz = sessionStorage.getItem( 'currentQuiz' );
+    // Attempt to get progress from session
+    let progress = sessionStorage.getItem( 'progress' );
+    // Bail out if anything amiss
+    if( !progress || !currentQuiz ) return 0;
+    
+    // JSONify it
+    progress = JSON.parse( progress );
+    // Bail out if anything amiss
+    if( !progress[currentQuiz] || !progress[currentQuiz][qNum] ) return 0;
+
+    // Calculate ques progress (3 = right first time, 2 = right after 1 mistake, 
+    // 1 = right after 2 mistakes, 0 = not yet right)
+    if( progress[currentQuiz][qNum].correct ) {
+        return progress[currentQuiz][qNum].answers + 1 - progress[currentQuiz][qNum].attempts;
+    }
+    else {
+        return 0;
+    }  
+}
+
+
+/** ***************************************************************
+ * Updates the nav bar, highlighting the current questuion and those
+ * near it (for mobile views, only close neighbours are shown in the
+ * nav due to limited screen width - handled by classes and CSS)
+ * 
+ * @param {number} qNum the current question number (0-max)
+ */
+ function updateQuestionNav( qNum ) {
     const maxQ = quiz.questions.length - 1;
 
     if( qNum < 0 || qNum > maxQ  ) return;
@@ -268,26 +466,74 @@ function updateQuestionNav( qNum ) {
 }
 
 
-function checkAnswer( aNum ) {
-    const feedback = document.getElementById( 'feedback' );
-    const answerList = document.getElementById( 'answers' ).querySelector( 'ol' );
-    const answers = answerList ? answerList.querySelectorAll( 'li' ) : null;
+function updateQuestionStars( qNum ) {
+    const maxQ = quiz.questions.length - 1;
 
-    if( aNum == quiz.questions[currentQuestion].correct ) {
+    if( qNum < 0 || qNum > maxQ  ) return;
+
+    // Marker elemenst
+    const markers = document.getElementById( 'question-markers' ).children;
+    // The stars container of the marker specific to the question
+    const starBlock = markers.item( qNum ).querySelector( '.stars' );
+
+    // HOw mnay stars have they earned?
+    const stars = getQuestionProgress( qNum );
+    // Update the UI to match
+    starBlock.className = 'stars has' + stars + ' from' + quiz.questions[qNum].answerCount;
+}
+
+
+/** ***************************************************************
+ * Check if a given question is correct or not, giving feedback (shown via CSS)
+ * An incorrect question triggers a feedback panel which is only shown for a 
+ * short time. A correct answer's feedback panel remains in view until the 
+ * next question is loaded. Also updates the status in the session
+ * 
+ * @param {number} qNum the question number to check (1-max)
+ * @param {number} aNum the answer number to check (1-max)
+ */
+function checkAnswer( qNum, aNum ) {
+    const isCorrect = aNum == quiz.questions[qNum].correctAnswer;
+
+    showFeedback( qNum, isCorrect );
+    setAnswerState( qNum, aNum, isCorrect );
+    updateQuestionProgress( qNum, isCorrect );
+    updateQuestionStars( qNum );
+}
+
+
+function showFeedback( qNum, isCorrect=null ) {
+    const feedback = document.getElementById( 'feedback' );
+
+    if( isCorrect === true ) {
         if( feedbackTimeout ) {
             clearTimeout( feedbackTimeout );
             feedbackTimeout = null;
         }
         feedback.className = 'show correct';
-        if( answers ) {
-            answers.forEach( answer => { answer.className = 'wrong'; } );
-            answers[aNum-1].className = 'correct';
-        }
     }
-    else {
+    else if( isCorrect === false ) {
         feedback.className = 'show wrong';
         feedbackTimeout = setTimeout( () => { feedback.className = 'hide'; }, 2000 );
-        if( answers ) answers[aNum-1].className = 'wrong';
+    }
+    else {
+        feedback.className = 'show';
     }
 }
 
+
+
+function setAnswerState( qNum, aNum, isCorrect ) {
+    const answerList = document.getElementById( 'answers' ).querySelector( 'ol' );
+    const answers = answerList ? answerList.querySelectorAll( 'li' ) : null;
+
+    if( answers ) {
+        if( isCorrect ) {
+            answers.forEach( answer => { answer.className = 'wrong'; } );
+            answers[aNum-1].className = 'correct';
+        }
+        else {
+            answers[aNum-1].className = 'wrong';
+        }
+    }
+}
