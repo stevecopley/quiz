@@ -1,3 +1,4 @@
+// Main quiz object, holds quiz data after laded from file
 let quiz = {
     'title': 'Quiz',
     'language': null,
@@ -5,15 +6,17 @@ let quiz = {
     'current': 0
 }
 
+// For tracking a timeout when needed
 let feedbackTimeout = null;
 
-
+// Showdown library options and convertor object
 showdown.setOption( 'customizedHeaderId', true );
 const converter = new showdown.Converter();
 
 
 /** ***************************************************************
- * 
+ * Pulls up the quiz list upon the first page load, then if a quiz is already
+ * in progress, jumps to it
  */
 async function initialiseQuiz() {
     loadQuizList();
@@ -28,8 +31,8 @@ async function initialiseQuiz() {
 
 
 /** ***************************************************************
- * 
- * @returns 
+ * Loads a list of quizzes from the master JSON list file and generates
+ * the main nav based up the categories and quizzes loaded
  */
 async function loadQuizList() {
     const title = document.getElementById( 'title' );
@@ -78,9 +81,11 @@ async function loadQuizList() {
 
 
 /** ***************************************************************
+ * Loads a quiz from a given URL (within the quizzes folder)
+ * Quiz data is stored in a quiz object, and the session has objects created
+ * to store answer progress. 
  * 
- * @param {*} url 
- * @returns 
+ * @param {string} url the URL of the quiz to load
  */
 async function loadQuiz( url ) {
     const title = document.getElementById( 'title' );
@@ -344,8 +349,8 @@ function showQuestion( qNum ) {
 
     // If questions answered already, update the UI of the answers
     if( getQuestionProgress( qNum ) > 0 ) {
-        setAnswerState( qNum, question.correctAnswer, true );
-        showFeedback( qNum );
+        setAnswerState( question.correctAnswer, true );
+        showFeedback();
     }
 
     // Save where we're at
@@ -353,7 +358,10 @@ function showQuestion( qNum ) {
 }
 
 
-
+/**
+ * Create objects in the session to track question progress so far. Existing records
+ * are left untouched, otherwise a fresh, shiny record is created
+ */
 function setupQuestionProgress() {
     // Attempt to get progress from session
     let progress = sessionStorage.getItem( 'progress' );
@@ -384,7 +392,12 @@ function setupQuestionProgress() {
 }
 
 
-
+/**
+ * Updates the attempt count and answered state of a given question in the session
+ * 
+ * @param {number} qNum the question to update the status of
+ * @param {boolean} isCorrect true if the question has been answered correctly
+ */
 function updateQuestionProgress( qNum, isCorrect ) {
     // Attempt to get the URL of current quiz. 
     const currentQuiz = sessionStorage.getItem( 'currentQuiz' );
@@ -407,6 +420,18 @@ function updateQuestionProgress( qNum, isCorrect ) {
 }
 
 
+/**
+ * Calculates and retursn a number relating to how well a question has been
+ * answered. Value ranges from 0 to the number of possible answers, i.e. it
+ * is a 'star' rating:
+ *  0 - not answered correctly yet
+ *  1 - all attemots incorrect until last
+ *  ...
+ *  max - correct first time
+ * 
+ * @param {number} qNum the question to get the status of
+ * @returns the number of 'stars' a question's answer has earnt
+ */
 function getQuestionProgress( qNum ) {
     // Attempt to get the URL of current quiz. 
     const currentQuiz = sessionStorage.getItem( 'currentQuiz' );
@@ -420,7 +445,7 @@ function getQuestionProgress( qNum ) {
     // Bail out if anything amiss
     if( !progress[currentQuiz] || !progress[currentQuiz][qNum] ) return 0;
 
-    // Calculate ques progress (3 = right first time, 2 = right after 1 mistake, 
+    // Calculate ques progress (e.g. if 3 answers: 3 = right first time, 2 = right after 1 mistake, 
     // 1 = right after 2 mistakes, 0 = not yet right)
     if( progress[currentQuiz][qNum].correct ) {
         return progress[currentQuiz][qNum].answers + 1 - progress[currentQuiz][qNum].attempts;
@@ -466,6 +491,12 @@ function getQuestionProgress( qNum ) {
 }
 
 
+/**
+ * Updates the classes of the given question marker so that the correct number
+ * of stars is shown (via CSS)
+ * 
+ * @param {number} qNum the question number to update
+ */
 function updateQuestionStars( qNum ) {
     const maxQ = quiz.questions.length - 1;
 
@@ -484,10 +515,8 @@ function updateQuestionStars( qNum ) {
 
 
 /** ***************************************************************
- * Check if a given question is correct or not, giving feedback (shown via CSS)
- * An incorrect question triggers a feedback panel which is only shown for a 
- * short time. A correct answer's feedback panel remains in view until the 
- * next question is loaded. Also updates the status in the session
+ * Check if a given question is correct or not, giving feedback and
+ * updating other status data / UI
  * 
  * @param {number} qNum the question number to check (1-max)
  * @param {number} aNum the answer number to check (1-max)
@@ -495,14 +524,24 @@ function updateQuestionStars( qNum ) {
 function checkAnswer( qNum, aNum ) {
     const isCorrect = aNum == quiz.questions[qNum].correctAnswer;
 
-    showFeedback( qNum, isCorrect );
-    setAnswerState( qNum, aNum, isCorrect );
+    showFeedback( isCorrect );
+    setAnswerState( aNum, isCorrect );
+
     updateQuestionProgress( qNum, isCorrect );
     updateQuestionStars( qNum );
 }
 
 
-function showFeedback( qNum, isCorrect=null ) {
+/** 
+ * Gives feedback for a given question and answer status (shown via CSS)
+ * An incorrect question triggers a feedback panel which is only shown for a 
+ * short time. A correct answer's feedback panel remains in view until the 
+ * next question is loaded. Non right/wrong feedback can also be shown in the
+ * case of previously answered questions
+ * 
+ * @param {boolean / null} isCorrect null for non-themed feedback, true/false otherwise
+ */
+function showFeedback( isCorrect=null ) {
     const feedback = document.getElementById( 'feedback' );
 
     if( isCorrect === true ) {
@@ -522,13 +561,20 @@ function showFeedback( qNum, isCorrect=null ) {
 }
 
 
-
-function setAnswerState( qNum, aNum, isCorrect ) {
+/**
+ * Updates the visual state of a given answer, styling it via CSS classes.
+ * If an answer is correct, all other answers are marked as wrong
+ * 
+ * @param {number} aNum the answer number to highlight
+ * @param {boolean} isCorrect true if answered correctly
+ */
+function setAnswerState( aNum, isCorrect ) {
     const answerList = document.getElementById( 'answers' ).querySelector( 'ol' );
     const answers = answerList ? answerList.querySelectorAll( 'li' ) : null;
 
     if( answers ) {
         if( isCorrect ) {
+            // Mark all other answers as wrong as we have the correct answer now
             answers.forEach( answer => { answer.className = 'wrong'; } );
             answers[aNum-1].className = 'correct';
         }
