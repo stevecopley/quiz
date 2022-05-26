@@ -1,4 +1,7 @@
-// Main quiz object, holds quiz data after laded from file
+// Holds the list of quizzes read from the config file 
+let quizzes = null;
+
+// Main quiz object, holds current quiz data after laded from file
 let quiz = {
     'title': 'Quiz',
     'language': null,
@@ -19,13 +22,16 @@ const converter = new showdown.Converter();
  * in progress, jumps to it
  */
 async function initialiseQuiz() {
-    loadQuizList();
+    const overview = document.getElementById( 'overview-link' );
+    overview.addEventListener( 'click', showOverview );
+
+    await loadQuizList();
 
     if( sessionStorage.getItem( 'currentQuiz' ) ) {
         loadQuiz( sessionStorage.getItem( 'currentQuiz' ) );
     }
     else {
-        sessionStorage.clear();
+        showOverview();
     }
 }
 
@@ -34,15 +40,8 @@ async function initialiseQuiz() {
  * Loads a list of quizzes from the master JSON list file and generates
  * the main nav based up the categories and quizzes loaded
  */
-async function loadQuizList() {
-    const title = document.getElementById( 'title' );
-    const infoBlock = document.getElementById( 'info' );
-    const quizBlock = document.getElementById( 'quiz' );
+ async function loadQuizList() {
     const menuBlock = document.getElementById( 'main-nav-links' );
-
-    title.innerHTML = 'Select a Quiz';
-    infoBlock.className = 'show';
-    quizBlock.className = 'hide';
 
     // Load the file
     quizzes = await getJSON( 'quizzes/list.json' );
@@ -80,6 +79,112 @@ async function loadQuizList() {
 }
 
 
+/**
+ * Shows an overview of all quizzes, including any progress made during the 
+ * current session
+ */
+function showOverview() {
+    const title = document.getElementById( 'title' );
+    const infoBlock = document.getElementById( 'info' );
+    const overBlock = document.getElementById( 'overview' );
+    const quizBlock = document.getElementById( 'quiz' );
+    const feedback  = document.getElementById( 'feedback' );
+
+    // Setup UI
+    title.innerHTML = 'Quiz Overview';
+    infoBlock.className = 'show';
+    overBlock.className = 'show';
+    quizBlock.className = 'hide';
+    feedback.className = 'hide';
+    // Clear out previous
+    overBlock.innerHTML = '';
+
+    // We're no longer doing a quiz, so scrub it
+    sessionStorage.removeItem( 'currentQuiz' );
+
+    // Attempt to get progress from session
+    let progress = sessionStorage.getItem( 'progress' );
+    if( progress  ) progress = JSON.parse( progress );
+    else            progress = {};
+
+    // Work thru the quiz types and build the main nav from them
+    Object.entries( quizzes ).forEach( ([quizType, quizList]) => {
+        // Quiz type section header
+        const typeHeading = document.createElement( 'h2' );
+        typeHeading.textContent = quizType;
+        overBlock.appendChild( typeHeading );
+
+        // Quizzes for this type?
+        if( quizList ) {
+            // Yup, so start a list
+            const quizTypeList = document.createElement( 'ul' );
+            quizTypeList.className = 'overview-list';
+            overBlock.appendChild( quizTypeList );
+
+            // Run thru the quizzes in this category
+            Object.entries( quizList ).forEach( ([quizName, quizURL]) => {
+                const quizItem = document.createElement( 'li' );
+                quizItem.innerText = quizName;
+
+                // Has it been attempted this session?
+                if( progress[quizURL] ) {
+                    const questionList = document.createElement( 'ol' );
+                    quizItem.appendChild( questionList );
+
+                    // Prep stats for overall score calc.
+                    let totalStars = 0;
+                    let maxStars = 0;
+
+                    // run thru the questions
+                    Object.entries( progress[quizURL] ).forEach( ([qNum, questionInfo]) => {
+                        const questionItem = document.createElement( 'li' );
+                        questionItem.innerText = qNum;
+                        // Style right/wrong based on attempts / correctness
+                        questionItem.className = questionInfo.correct ? 'correct' : questionInfo.attempts > 0 ? 'wrong' : '';
+
+                        // Setup stars
+                        const starBlock = createStars( questionInfo.answers, true );
+                        const numStars = getQuestionProgress( qNum, quizURL );
+                        // Update stats for score calc
+                        maxStars += questionInfo.answers;
+                        totalStars += numStars;
+                        // Alter class to show correct stars earned
+                        starBlock.classList.remove( 'has0' );
+                        starBlock.classList.add( 'has' + numStars );
+                        questionItem.appendChild( starBlock );
+                        // Can click directly to that question
+                        questionItem.addEventListener( 'click', () => { 
+                            sessionStorage.setItem( 'currentQuestion', qNum );
+                            loadQuiz( quizURL ); 
+                        }, true );
+                        questionList.appendChild( questionItem );
+                    } );
+
+                    // Calc the overall score, based on stars earned / max possible
+                    const score = document.createElement( 'p' );
+                    score.className = 'score';
+                    score.innerText = `${Math.round( totalStars * 100 / maxStars )}%`;
+                    quizItem.appendChild( score );
+                }
+                else {
+                    // nope... no attempt made so far
+                    const notStarted  = document.createElement( 'p' );
+                    notStarted.innerText = 'Not attempted';
+                    quizItem.appendChild( notStarted );
+                }               
+
+                // Can click to the quiz
+                quizItem.addEventListener( 'click', () => { 
+                    sessionStorage.setItem( 'currentQuestion', 0 );
+                    loadQuiz( quizURL ); 
+                }, true );
+                quizTypeList.appendChild( quizItem );
+            } );    
+        }
+    } );
+}
+
+
 /** ***************************************************************
  * Loads a quiz from a given URL (within the quizzes folder)
  * Quiz data is stored in a quiz object, and the session has objects created
@@ -90,6 +195,7 @@ async function loadQuizList() {
 async function loadQuiz( url ) {
     const title = document.getElementById( 'title' );
     const infoBlock = document.getElementById( 'info' );
+    const overBlock = document.getElementById( 'overview' );
 
     // Load the file
     const quizMD = await getMarkdown( 'quizzes/' + url );
@@ -105,6 +211,7 @@ async function loadQuiz( url ) {
     // Tidy up the display
     closeMenu();
     infoBlock.className = 'hide';
+    overBlock.className = 'hide';
 
     // Break up the quiz MD based on HRs
     mdBlocks = quizMD.split( '---' );
@@ -146,8 +253,6 @@ async function loadQuiz( url ) {
         // And add it to the question list
         quiz.questions.push( question );
     } );
-
-    console.log( quiz );
 
     // Get the question progress stats ready to use
     setupQuestionProgress();
@@ -212,6 +317,27 @@ function closeMenu() {
 }
 
 
+/**
+ * Creates a DIV container with the appropriate numb er of child DIVs to act 
+ * as stars (via CSS)
+ * 
+ * @param {number} numStars the number of stars required (1-4)
+ * @param {boolean} small default false, if true adds 'small' to class list
+ * @returns a DIV element with the stars inside
+ */
+function createStars( numStars, small=false ) {
+    const starBlock = document.createElement( 'div' );
+    starBlock.className = 'stars has0 from' + numStars + (small ? ' small' : '');
+    let starsHTML = '';
+    if( numStars >= 1 ) starsHTML += '<div class="star"></div>';
+    if( numStars >= 2 ) starsHTML += '<div class="star"></div>';
+    if( numStars >= 3 ) starsHTML += '<div class="star"></div>';
+    if( numStars >= 4 ) starsHTML += '<div class="star"></div>';
+    starBlock.innerHTML = starsHTML;
+    return starBlock;
+}
+
+
 /** ***************************************************************
  * Setup the question nav progress bar, based on the number of questions
  * in the current quiz. The first marker is always assumed to be an intro
@@ -240,17 +366,9 @@ function buildQuestionNav() {
         else {
             // An actual question, so show the number
             questionIndicator.innerHTML = i;
-
             // Setup the appropriate amount of stars for the question
-            const starBlock = document.createElement( 'div' );
-            starBlock.className = 'stars has0';
+            const starBlock = createStars( quiz.questions[i].answerCount );
             questionIndicator.appendChild( starBlock );
-            let starsHTML = '';
-            if( quiz.questions[i].answerCount >= 1 ) starsHTML += '<div class="star"></div>';
-            if( quiz.questions[i].answerCount >= 2 ) starsHTML += '<div class="star"></div>';
-            if( quiz.questions[i].answerCount >= 3 ) starsHTML += '<div class="star"></div>';
-            if( quiz.questions[i].answerCount >= 4 ) starsHTML += '<div class="star"></div>';
-            starBlock.innerHTML = starsHTML;
         }
 
         // Click event handlers
@@ -430,25 +548,26 @@ function updateQuestionProgress( qNum, isCorrect ) {
  *  max - correct first time
  * 
  * @param {number} qNum the question to get the status of
+ * @param {text} quizURL the URL of the quiz. Default null and if so, current quiz
  * @returns the number of 'stars' a question's answer has earnt
  */
-function getQuestionProgress( qNum ) {
-    // Attempt to get the URL of current quiz. 
-    const currentQuiz = sessionStorage.getItem( 'currentQuiz' );
+function getQuestionProgress( qNum, quizURL=null ) {
+    // Attempt to get the URL of current quiz, if not given 
+    if( quizURL === null ) quizURL = sessionStorage.getItem( 'currentQuiz' );
     // Attempt to get progress from session
     let progress = sessionStorage.getItem( 'progress' );
     // Bail out if anything amiss
-    if( !progress || !currentQuiz ) return 0;
+    if( !progress || !quizURL ) return 0;
     
     // JSONify it
     progress = JSON.parse( progress );
     // Bail out if anything amiss
-    if( !progress[currentQuiz] || !progress[currentQuiz][qNum] ) return 0;
+    if( !progress[quizURL] || !progress[quizURL][qNum] ) return 0;
 
     // Calculate ques progress (e.g. if 3 answers: 3 = right first time, 2 = right after 1 mistake, 
     // 1 = right after 2 mistakes, 0 = not yet right)
-    if( progress[currentQuiz][qNum].correct ) {
-        return progress[currentQuiz][qNum].answers + 1 - progress[currentQuiz][qNum].attempts;
+    if( progress[quizURL][qNum].correct ) {
+        return progress[quizURL][qNum].answers + 1 - progress[quizURL][qNum].attempts;
     }
     else {
         return 0;
@@ -557,6 +676,11 @@ function showFeedback( isCorrect=null ) {
     }
     else {
         feedback.className = 'show';
+    }
+
+    if( feedback.getAttribute( 'hasListener' ) != 'true' ) {
+        feedback.addEventListener( 'click', () => { feedback.className = 'hide'; } );
+        feedback.setAttribute( 'hasListener', 'true' );
     }
 }
 
