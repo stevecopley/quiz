@@ -22,7 +22,9 @@ const converter = new showdown.Converter();
  * in progress, jumps to it
  */
 async function initialiseQuiz() {
+    const heading  = document.getElementById( 'main-heading' );
     const overview = document.getElementById( 'overview-link' );
+    heading.addEventListener( 'click', showOverview );
     overview.addEventListener( 'click', showOverview );
 
     await loadQuizList();
@@ -91,6 +93,7 @@ function showOverview() {
     const feedback  = document.getElementById( 'feedback' );
 
     // Setup UI
+    closeMenu();
     title.innerHTML = 'Quiz Overview';
     infoBlock.className = 'show';
     overBlock.className = 'show';
@@ -213,8 +216,8 @@ async function loadQuiz( url ) {
     infoBlock.className = 'hide';
     overBlock.className = 'hide';
 
-    // Break up the quiz MD based on HRs
-    mdBlocks = quizMD.split( '---' );
+    // Break up the quiz MD based on HRs (three or more ---s)
+    mdBlocks = quizMD.split( /^----*$/m );
 
     // First block contains our title as an H1 and other info, seperated by '--'?
     if( mdBlocks[0].trim().substring( 0, 2 ) == '# ' ) {
@@ -455,21 +458,31 @@ function showQuestion( qNum ) {
 
     // Add event handlers to answers, but not for intro (qNum 0)
     if( qNum > 0 ) {
+        // Grab the answer <li> elements
         const answers = answBlock.querySelectorAll( 'li' );
         const numAnswers = answers.length;
-        for( let i = 0; i < numAnswers; i++ ) {
-            answers[i].addEventListener( 'click', () => { checkAnswer( qNum, i + 1 ); } );
+        let correctAnswerElement = null;
+
+        for( let aNum = 1; aNum <= numAnswers; aNum++ ) {
+            const isCorrect = aNum == question.correctAnswer;
+            const ansElem = answers[aNum-1];
+
+            ansElem.addEventListener( 'click', (e) => { markAnswer( e, qNum, isCorrect ); } );
+            // Randomise the order of display... If two get the same order, it's no big deal!
+            ansElem.style.order = Math.floor( Math.random() * 99 );
+            // Save a ref. to the correct answer for later
+            if( isCorrect ) correctAnswerElement = ansElem;
+        }
+
+        // If questions answered already, update the UI of the answers
+        if( getQuestionProgress( qNum ) > 0 && correctAnswerElement !== null ) {
+            setAnswerState( correctAnswerElement, true );
+            showFeedback();
         }
     }
 
     // Update progress bar
     updateQuestionNav( qNum );
-
-    // If questions answered already, update the UI of the answers
-    if( getQuestionProgress( qNum ) > 0 ) {
-        setAnswerState( question.correctAnswer, true );
-        showFeedback();
-    }
 
     // Save where we're at
     sessionStorage.setItem( 'currentQuestion', qNum );      
@@ -633,22 +646,23 @@ function updateQuestionStars( qNum ) {
 }
 
 
+
 /** ***************************************************************
- * Check if a given question is correct or not, giving feedback and
+ * Marks an answer correct or not, giving feedback and
  * updating other status data / UI
  * 
- * @param {number} qNum the question number to check (1-max)
- * @param {number} aNum the answer number to check (1-max)
+ * @param {object} e the click event (from which can get the target)
+ * @param {number} qNum the question number (1-max)
+ * @param {boolean} isCorrect true if correct, false otherwise
  */
-function checkAnswer( qNum, aNum ) {
-    const isCorrect = aNum == quiz.questions[qNum].correctAnswer;
-
+ function markAnswer( e, qNum, isCorrect ) {
     showFeedback( isCorrect );
-    setAnswerState( aNum, isCorrect );
+    setAnswerState( e.target, isCorrect );
 
     updateQuestionProgress( qNum, isCorrect );
     updateQuestionStars( qNum );
 }
+
 
 
 /** 
@@ -689,10 +703,10 @@ function showFeedback( isCorrect=null ) {
  * Updates the visual state of a given answer, styling it via CSS classes.
  * If an answer is correct, all other answers are marked as wrong
  * 
- * @param {number} aNum the answer number to highlight
+ * @param {object} ansElem the <li> to highlight
  * @param {boolean} isCorrect true if answered correctly
  */
-function setAnswerState( aNum, isCorrect ) {
+function setAnswerState( ansElem, isCorrect ) {
     const answerList = document.getElementById( 'answers' ).querySelector( 'ol' );
     const answers = answerList ? answerList.querySelectorAll( 'li' ) : null;
 
@@ -700,10 +714,10 @@ function setAnswerState( aNum, isCorrect ) {
         if( isCorrect ) {
             // Mark all other answers as wrong as we have the correct answer now
             answers.forEach( answer => { answer.className = 'wrong'; } );
-            answers[aNum-1].className = 'correct';
+            ansElem.className = 'correct';
         }
         else {
-            answers[aNum-1].className = 'wrong';
+            ansElem.className = 'wrong';
         }
     }
 }

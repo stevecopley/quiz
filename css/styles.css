@@ -88,22 +88,20 @@ strong {
     box-shadow: var(--shadow);
 }
 
-#main-header h1,
-#main-header h1 a {
+#main-header h1 {
     font-size: min(2rem, 8vw);
     color: var(--accent);
     text-decoration: none;
 }
 
-#main-header h1 a {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-}
-
 #main-header img {
     width: 3rem;
     height: 3rem;
+}
+
+#main-heading,
+#overview-link {
+    cursor: pointer;
 }
 
 
@@ -374,7 +372,7 @@ main li {
     line-height: 1;
     position: relative;
     border-radius: 5rem;
-    border: 1px solid var(--tone-light);
+    border: 2px solid var(--tone-light);
     color: var(--tone-light);     
     background-color: var(--tone-dark);
 }

@@ -34,7 +34,7 @@ You will be asked to either *predict* what it does, or to suggest  *changes* tha
 * Variables can be set using the values of other variables, like this: `area = height * width` or `cost = price + gst`
 * The value of a variable can be adjusted like this: `score = score + 100` (adds 100 to the score)
 
----
+--------------------------------------------------------------------------
 
 ## Question 1
 
@@ -63,7 +63,7 @@ If you `print()` a variable, the computer will display the variables *value*, no
 
 
 
----
+--------------------------------------------------------------------------
 
 ## Question 2
 
@@ -92,7 +92,7 @@ Variables names should not have speech marks around them, otherwise the computer
 
 
 
----
+--------------------------------------------------------------------------
 
 ## Question 3
 
@@ -125,7 +125,7 @@ Note that the first two are easier to read due to the use of an *underscore betw
 
 
 
----
+--------------------------------------------------------------------------
 
 ## Question 4
 
