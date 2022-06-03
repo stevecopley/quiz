@@ -1,0 +1,410 @@
+:root {
+    --scratch-back:   #eceff1;
+
+    --stage-back:     #eee;
+    --stage-border:   #666;
+
+    --block-unknown:  #888;
+    --border-unknown: #666;
+
+    --block-move:     #4C97FF;
+    --border-move:    #3373CC;
+    --block-look:     #9966ff;
+    --border-look:    #774dcb;
+    --block-ctrl:     #ffab19;
+    --border-ctrl:    #cf8b17;
+    --block-evnt:     #ffbf00;
+    --border-evnt:    #cc9900;
+    --block-sens:     #5cb1d6;
+    --border-sens:    #2e8eb8;
+    --block-oper:     #59c059;
+    --border-oper:    #389438;
+    --block-vars:     #ff8c1a;
+    --border-vars:    #db6e00;
+    --block-sond:     #cf63cf;
+    --border-sond:    #bd42bd;
+
+    --border-col:     #0004;
+
+    --value-back:     #fff;
+    --shading-low:    #00000008;
+    --shading:        #0002;
+
+    --block-text:     #fff;
+    --value-text:     #000;
+
+    --block-radius:  0.3em;
+    --border-width:  1px;
+    --border-style:  solid;
+}
+
+
+/*** CONTAINERS **********************************************************/
+
+pre.language-scratch {
+    background: var(--scratch-back);
+    padding: 0 0 0.5rem;
+    background: none;
+    border: none;
+}
+
+:not(pre) > code.language-scratch {
+    background: none;
+    border: none;
+    padding: 0 0 0.5rem;
+    margin: 0 0.6rem;
+}
+
+
+pre.language-scratch,
+code.language-scratch,
+:not(pre) > code.language-scratch {
+    white-space: normal;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+
+/*** STAGE **********************************************************/
+
+code.language-scratch .stage {
+    width: 100%;
+    max-width: 480px;
+    aspect-ratio: 4 / 3;
+    background-color: var(--stage-back);
+    border: 2px solid var(--stage-border);
+    position: relative;
+    background-image: url('../images/scratch-stage.svg');
+    background-position: center;
+    background-size: contain;
+}
+
+code.language-scratch .stage header,
+code.language-scratch .stage footer {
+    display: none;
+}
+
+
+/*** SPRITE **********************************************************/
+
+code.language-scratch {
+    --sprite-x: 0;
+    --sprite-y: 0;
+    --sprite-angle: 0;
+    --sprite-size: 100;
+    --sprite-image: url('../images/scratch-turtle.svg');
+}
+
+
+code.language-scratch .sprite {
+    position: absolute;
+
+    --scaled-width:  calc(100% * (var(--sprite-size) / 480));
+    --scaled-height: calc(100% * (var(--sprite-size) / 360));
+  
+    width: var(--scaled-width);
+    height: var(--scaled-height);
+  
+    left:   calc((100% * ((240 + var(--sprite-x)) / 480)) - (var(--scaled-width) / 2));
+    bottom: calc((100% * ((180 + var(--sprite-y)) / 360)) - (var(--scaled-height) / 2));
+}
+
+code.language-scratch .sprite img {
+    content: var(--sprite-image);
+    width: 100%;
+    height: 100%;
+    transform: rotate( calc(1deg * var(--sprite-angle)) );
+}
+
+code.language-scratch .sprite .value {
+    position: absolute;
+    left: 100%;
+    white-space: nowrap;
+    padding: 0.1rem 0.2rem;
+    border-radius: 0.3rem;
+    font-size: 0.8rem;
+    line-height: 1;
+    font-weight: normal;
+    background-color: var(--block-unknown);
+    color: var(--block-text);
+    /* opacity: 0.5; */
+}
+
+code.language-scratch .sprite.noinfo .value {
+    display: none;
+}
+
+code.language-scratch .sprite .value:nth-of-type(1) { top: calc(50% - 2.20rem); }
+code.language-scratch .sprite .value:nth-of-type(2) { top: calc(50% - 1.10rem); }
+code.language-scratch .sprite .value:nth-of-type(3) { top: calc(50% + 0.00rem); }
+code.language-scratch .sprite .value:nth-of-type(4) { top: calc(50% + 1.10rem); }
+code.language-scratch .sprite .value:nth-of-type(n+5) { display: none; }
+
+code.language-scratch .sprite .value.sprite-x     { background-color: var(--block-move); }
+code.language-scratch .sprite .value.sprite-y     { background-color: var(--block-move); }
+code.language-scratch .sprite .value.sprite-angle { background-color: var(--block-move); }
+code.language-scratch .sprite .value.sprite-size  { background-color: var(--block-look); }
+code.language-scratch .sprite .value.sprite-image { display: none; }
+
+code.language-scratch .sprite .value.sprite-x::before     { content: 'x: '; }
+code.language-scratch .sprite .value.sprite-y::before     { content: 'y: '; }
+code.language-scratch .sprite .value.sprite-angle::before { content: 'angle: '; }
+code.language-scratch .sprite .value.sprite-size::before  { content: 'size: '; }
+
+
+/*** BLOCKS **********************************************************/
+
+code.language-scratch .block {
+    --back-col: var(--block-unknown);
+    --bord-col: var(--border-unknown);
+    padding: 0.5em 0.6em;
+    width: max-content;
+    min-width: 5em;
+    border-radius: var(--block-radius);
+    color: var(--block-text);
+    position: relative;
+    background-color: var(--back-col);
+    border: var(--border-width) var(--border-style) var(--bord-col);
+}
+
+code.language-scratch .block,
+code.language-scratch .block header {
+    display: flex;
+    gap: 0.5em;
+    align-items: center;
+}
+
+/*** CONTAINER BLOCKS **********************************************************/
+
+code.language-scratch .block.container {
+    flex-direction: column;
+    gap: 0;
+    align-items: flex-start;
+    justify-content: space-between;
+    /* width: 1em; */
+    min-height: 7em;
+    min-width: 10em;
+    padding: 0;
+    /* border-top: none; */
+    /* border-bottom: none; */
+    background-color: transparent;
+    background-image: linear-gradient( to right, var(--back-col) 1em, transparent 1rem );
+    border-right: none;
+}
+
+code.language-scratch .block header,
+code.language-scratch .block footer {
+    position: relative;
+    /* left: calc( -1em - var(--border-width) ); */
+    /* min-width: 11em; */
+    width: 100%;
+    padding: 0.5em;
+    border: var(--border-width) var(--border-style) var(--border-unknown);
+    border-left: none;
+    border-radius: var(--block-radius);
+    border-color: var(--bord-col);
+    background-color: var(--back-col);
+    border: none;
+}
+
+code.language-scratch .block header {
+    /* border-radius: var(--block-radius) var(--block-radius) var(--block-radius) 0; */
+    border-bottom: none;
+}
+
+code.language-scratch .block footer {
+    padding: 0.2em;
+    line-height: 1;
+    min-height: 2em;
+    text-align: right;
+    /* border-radius: 0 var(--block-radius) var(--block-radius) var(--block-radius); */
+    border-top: none;
+}
+
+code.language-scratch .block.splitter {
+    width: 100%;
+    border-radius: 0 var(--block-radius) var(--block-radius) 0;
+    position: relative;
+    left: calc(0px - var(--border-width));
+    left: -1em;
+    border: none;
+}
+
+code.language-scratch .block.container .block {
+    margin-left: calc( 1em + 1px );
+}
+
+
+/*** STARTING BLOCKS **********************************************************/
+
+code.language-scratch .block.starter {
+    margin-top: 1.25em;
+    min-height: 3em;
+}
+
+code.language-scratch .block.starter::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: -1.15em;
+    left: 0;
+    height: 2.5em;
+    width: 6em;
+    background-image: linear-gradient( var(--back-col) 60%, transparent 60% );
+    border-radius: 50% 50% 0 0;
+    border-top: var(--border-width) var(--border-style) var(--bord-col);
+    z-index: 2;
+}
+
+
+/*** BLOCK CONNECTORS **********************************************************/
+
+code.language-scratch .block:not(:is(.gap, .final))::after,
+code.language-scratch .block header::after {
+    content: '';
+    display: block;
+    position: absolute;
+    bottom: -0.5em;
+    left: 1em;
+    height: 0.5em;
+    width: 1.5em;
+    background-color: var(--back-col);
+    border-radius: 0 0 var(--block-radius) var(--block-radius);
+    border: var(--border-width) var(--border-style) var(--bord-col);
+    border-top: none;
+    z-index: 1;
+}
+
+code.language-scratch .block header::after,
+code.language-scratch .block.splitter::after {
+    left: 2.2em;
+}
+
+
+/*** SUB BLOCKS **********************************************************/
+
+code.language-scratch .sub-block {
+    --back-col: var(--block-unknown);
+    --bord-col: var(--border-unknown);
+    display: inline-flex;
+    gap: 0.5em;
+    align-items: center;
+    padding: 0.3em 0.5em;
+    background-color: var(--back-col);
+    border: var(--border-width) var(--border-style) var(--bord-col);
+}
+
+code.language-scratch .sub-block.logic {
+    --taper: 1em;
+    --offset: 3%;
+
+    padding: 0.3em 1.5em;
+    clip-path: polygon(
+        calc(var(--offset) + var(--taper)) 0%,
+        calc(100% - var(--offset) - var(--taper)) 0%,
+        100% 50%,
+        calc(100% - var(--offset) - var(--taper)) 100%,
+        calc(var(--offset) + var(--taper)) 100%,
+        0% 50%
+    );
+
+    /* super-cludgy way of adding 'borders' to a clip-path shape, using gradients that can just be seen */
+    --border-start: calc((var(--offset) + var(--taper)) * 0.7);
+    --border-end: calc(var(--border-start) + (2 * var(--border-width)));
+    background-image: linear-gradient(45deg,  var(--bord-col) var(--border-start), var(--back-col) var(--border-end), transparent 25%),
+                      linear-gradient(135deg, var(--bord-col) var(--border-start), var(--back-col) var(--border-end), transparent 25%),
+                      linear-gradient(225deg, var(--bord-col) var(--border-start), var(--back-col) var(--border-end), transparent 25%),
+                      linear-gradient(315deg, var(--bord-col) var(--border-start), var(--back-col) var(--border-end), transparent 25%);
+}
+
+
+code.language-scratch .sub-block.operator.logic.boolean {
+    padding: 0.3em 0.5em;
+}
+
+code.language-scratch .sub-block.operator:not(.logic) {
+    border-radius: 3em;
+}
+
+code.language-scratch .sub-block.operator.function {
+    padding: 0.3em 0.5em 0.3em 0.8em;
+}
+
+
+/*** DATA CONTAINERS **********************************************************/
+
+code.language-scratch img {
+    display: inline-block;
+    height: 1.4em;
+    width: 1.4em;
+}
+
+code.language-scratch .value {
+    display: inline-flex;
+    gap: 0.5em;
+    align-items: center;
+    justify-content: center;
+    padding: 0.2em 0.6em;
+    min-width: 2.5em;
+    border-radius: 2em;
+    border: var(--border-width) var(--border-style) var(--bord-col);
+    background-color: var(--value-back);
+    color: var(--value-text);
+}
+
+code.language-scratch .menu {
+    display: inline-block;
+    position: relative;
+    padding: 0.2em 1.6em 0.2em 0.6em;
+    border-radius: var(--block-radius);
+    border: var(--border-width) var(--border-style) var(--bord-col);
+    background-color: var(--shading-low);
+    color: var(--block-text);
+}
+
+code.language-scratch :is(.sensing, .value.sensing) .menu {
+    border-radius: 2em;
+}
+
+code.language-scratch .menu::after {
+    content: '▼';
+    position: absolute;
+    right: 0.4em;
+    top: 0.2em;
+}
+
+code.language-scratch .value.colour {
+    background-color: var(--back-col);
+}
+
+
+/*** GAPS **********************************************************/
+
+code.language-scratch .gap {
+    background: none;
+    border: none;
+    height: 2em;
+}
+
+
+
+/*** BLOCK COLOURS **********************************************************/
+
+code.language-scratch .value.move     { color: var(--block-text); background-color: var(--block-move); }
+code.language-scratch .value.looks    { color: var(--block-text); background-color: var(--block-look); }
+code.language-scratch .value.sensing  { color: var(--block-text); background-color: var(--block-sens); }
+code.language-scratch .value.variable { color: var(--block-text); background-color: var(--block-vars); }
+
+code.language-scratch .block.movement     { --back-col: var(--block-move); --bord-col: var(--border-move); }
+code.language-scratch .block.looks        { --back-col: var(--block-look); --bord-col: var(--border-look); }
+code.language-scratch .block.control      { --back-col: var(--block-ctrl); --bord-col: var(--border-ctrl); }
+code.language-scratch .block.events       { --back-col: var(--block-evnt); --bord-col: var(--border-evnt); }
+code.language-scratch .block.sensing      { --back-col: var(--block-sens); --bord-col: var(--border-sens); }
+code.language-scratch .block.operators    { --back-col: var(--block-oper); --bord-col: var(--border-oper); }
+code.language-scratch .block.variables    { --back-col: var(--block-vars); --bord-col: var(--border-vars); }
+code.language-scratch .block.sounds       { --back-col: var(--block-sond); --bord-col: var(--border-sond); }
+
+code.language-scratch .sub-block.operator { --back-col: var(--block-oper); --bord-col: var(--border-oper); }
+code.language-scratch .sub-block.sensing  { --back-col: var(--block-sens); --bord-col: var(--border-sens); }
+

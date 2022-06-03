@@ -1,4 +1,7 @@
 {
+    "Scratch Quizzes": {
+        "Scratch 1: Movement": "scratch/movement.md"
+    },
     "Python Quizzes": {
         "Python 1: Input and Output": "python/inout.md",
         "Python 2: Variables": "python/variables.md",

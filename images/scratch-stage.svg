@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 480 360" xmlns="http://www.w3.org/2000/svg">
+  <path style="fill: rgb(216, 216, 216); stroke: rgb(185, 206, 216);" d="M 0 180 L 480 180"/>
+  <path style="fill: rgb(216, 216, 216); stroke: rgb(185, 206, 216);" d="M 276.407 1.108 L 276.407 361.108" transform="matrix(1, 0, 0, 1, -36.40718, -1.10778)"/>
+  <path style="fill: rgb(216, 216, 216); stroke: rgb(185, 206, 216);" d="M 340 170 L 340 190"/>
+  <text style="fill: rgb(186, 205, 216); font-family: Arial, sans-serif; white-space: pre; font-size: 15px;" x="328" y="203.473">100</text>
+  <path style="fill: rgb(216, 216, 216); stroke: rgb(185, 206, 216);" d="M 440 170 L 440 190"/>
+  <path style="fill: rgb(216, 216, 216); stroke: rgb(185, 206, 216);" d="M 140 170 L 140 190"/>
+  <path style="fill: rgb(216, 216, 216); stroke: rgb(185, 206, 216);" d="M 40 170 L 40 190"/>
+  <text style="fill: rgb(186, 205, 216); font-family: Arial, sans-serif; white-space: pre; font-size: 15px;" x="428" y="203.473">200</text>
+  <text style="fill: rgb(186, 205, 216); font-family: Arial, sans-serif; white-space: pre; font-size: 15px;" x="25" y="203.473">-200</text>
+  <text style="fill: rgb(186, 205, 216); font-family: Arial, sans-serif; white-space: pre; font-size: 15px;" x="125" y="203.473">-100</text>
+  <text style="fill: rgb(186, 205, 216); font-family: Arial, sans-serif; white-space: pre; font-size: 15px;" x="220" y="203.473">0</text>
+  <path style="fill: rgb(216, 216, 216); stroke: rgb(185, 206, 216);" d="M 230 80 L 250 80"/>
+  <path style="fill: rgb(216, 216, 216); stroke: rgb(185, 206, 216);" d="M 230 280 L 250 280"/>
+  <text style="fill: rgb(186, 205, 216); font-family: Arial, sans-serif; white-space: pre; font-size: 15px;" x="197" y="285.473">-100</text>
+  <text style="fill: rgb(186, 205, 216); font-family: Arial, sans-serif; white-space: pre; font-size: 15px;" x="202" y="85.473">100</text>
+  <path style="fill: rgb(216, 216, 216); stroke: rgb(185, 206, 216);" d="M 290 175 L 290 185"/>
+  <path style="fill: rgb(216, 216, 216); stroke: rgb(185, 206, 216);" d="M 390 175 L 390 185"/>
+  <path style="fill: rgb(216, 216, 216); stroke: rgb(185, 206, 216);" d="M 90 175 L 90 185"/>
+  <path style="fill: rgb(216, 216, 216); stroke: rgb(185, 206, 216);" d="M 190 175 L 190 185"/>
+  <path style="fill: rgb(216, 216, 216); stroke: rgb(185, 206, 216);" d="M 235.01 130 L 245.01 130"/>
+  <path style="fill: rgb(216, 216, 216); stroke: rgb(185, 206, 216);" d="M 235.01 330 L 245.01 330"/>
+  <path style="fill: rgb(216, 216, 216); stroke: rgb(185, 206, 216);" d="M 235 30 L 245 30"/>
+  <path style="fill: rgb(216, 216, 216); stroke: rgb(185, 206, 216);" d="M 235 230 L 245 230"/>
+</svg>

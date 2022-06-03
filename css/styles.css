@@ -99,14 +99,24 @@ strong {
     height: 3rem;
 }
 
-#main-heading,
-#overview-link {
+#main-heading{    
     cursor: pointer;
 }
 
 
 
 /*** NAV *******************************************************/
+
+#overview-link {
+    cursor: pointer;
+    margin-right: 1rem;
+    color: var(--accent);
+}
+
+#overview-link:hover {
+    color: var(--tone-very-light);
+}
+
 
 #main-nav img {
     width: 1.5rem;
@@ -315,6 +325,10 @@ main li {
 
 /*** OVERVIEW *******************************************************/
 
+#overview h2 {
+    color: var(--accent);
+}
+
 .overview-list {
     list-style: none;
     padding: 0;
@@ -346,6 +360,7 @@ main li {
 }
 
 .overview-list > li > p.score {
+    order: 2;
     color: var(--accent);
     font-size: 1.3rem;
     margin: 0;
@@ -353,8 +368,10 @@ main li {
     text-align: right;
 }
 
+/* Answer markers */
 .overview-list ol {
-    flex: 1;
+    order: 3;
+    width: 100%;
     list-style: none;
     padding: 0 0 0 1rem;
     display: flex;
@@ -377,9 +394,17 @@ main li {
     background-color: var(--tone-dark);
 }
 
-@media screen and (min-width: 30rem) {
+@media screen and (min-width: 35rem) {
     .overview-list ol {
         font-size: 1.3rem;
+    }
+}
+
+@media screen and (min-width: 45rem) {
+    .overview-list ol {
+        order: 1;
+        width: auto;
+        flex: 1;
     }
 }
 
@@ -488,6 +513,7 @@ main li {
     background-color: var(--tone-very-dark);
     position: fixed;
     top: 5.8rem;
+    z-index: 99;
 }
 
 #prev-question {
@@ -668,6 +694,7 @@ pre[class*=language-],
 
 #feedback {
     position: fixed;
+    z-index: 99;
     bottom: -1rem;
     background-color: var(--tone-very-dark);
     padding: 1rem 1rem 3rem;

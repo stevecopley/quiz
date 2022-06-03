@@ -455,6 +455,7 @@ function showQuestion( qNum ) {
         block.classList.add( 'language-' + quiz.language ); 
     } );
     Prism.highlightAll();
+    if( quiz.language == 'scratch' ) Scratch.highlightAll();
 
     // Add event handlers to answers, but not for intro (qNum 0)
     if( qNum > 0 ) {
