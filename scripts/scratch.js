@@ -31,7 +31,30 @@ var Scratch = (function (_self) {
 
 
         postProcess: function ( element ) {
-            //TODO: work thru stages to position turtles
+            _.processSprites( element );
+            _.processStages( element );
+        },
+
+
+        processStages: function ( element ) {
+			const stages = Array.prototype.slice.apply( element.querySelectorAll( '.stage' ) );
+
+            stages.forEach( stage => {
+                const headers = stage.querySelectorAll( 'header' );
+                if( headers.length > 0 ) {
+                    const header = headers[0];
+                    const imageValues = header.querySelectorAll( '.value' );
+                    if( imageValues.length > 0 ) {
+                        const imageVal = imageValues[0].textContent;
+
+                        stage.style.backgroundImage = `url('images/scratch/stages/${imageVal}.svg')`;
+                    }
+                }
+			} );
+        },
+
+
+        processSprites: function ( element ) {
 			const sprites = Array.prototype.slice.apply( element.querySelectorAll( '.sprite' ) );
 
             sprites.forEach( sprite => {
@@ -66,7 +89,7 @@ var Scratch = (function (_self) {
                 cssVars += `--sprite-y:     ${info.y}; `;
                 cssVars += `--sprite-angle: ${info.angle}; `;
                 cssVars += `--sprite-size:  ${info.size}; `;
-                cssVars += `--sprite-image: url('../images/scratch-${info.name}.svg'); `;
+                cssVars += `--sprite-image: url('../images/scratch/sprites/${info.name}.svg'); `;
 
                 sprite.style = cssVars;
 			} );
@@ -170,9 +193,9 @@ var Scratch = (function (_self) {
                 code = code.replace( colMarker,   '' );
                 code = code.replace( menuMarker,  '' );
             }
-            
+
             // Includes an image?
-            if( code.includes( '{i}' ) && block.image ) code = code.replace( '{i}', `<img src="images/${block.image}">` );
+            if( code.includes( '{i}' ) && block.image ) code = code.replace( '{i}', `<img src="images/scratch/${block.image}">` );
 
            return code;
         },
@@ -231,8 +254,6 @@ var Scratch = (function (_self) {
                 return token;
             }
 
-            console.log( '>>> ' + line );
-
             // Ok, must have some groupings to parse...
             line.trim().split( '' ).forEach( character => {
                 // End of a non-grouped word? Must be the operator
@@ -262,8 +283,6 @@ var Scratch = (function (_self) {
                     }
                 }
             } );
-
-            console.log( token );
 
             return token;
         },
@@ -304,24 +323,24 @@ var Scratch = (function (_self) {
                     block.type     = 'sprite';
                     block.category = 'noinfo';
                     block.command  = '{i} {1} {2} {3} {4} {5}';
-                    block.image    = 'scratch-turtle.svg';
+                    block.image    = 'sprites/turtle.svg';
                     break;
 
                 case 'spriteinfo':
                     block.type     = 'sprite';
                     block.category = 'showinfo';
                     block.command  = '{i} {1} {2} {3} {4} {5}';
-                    block.image    = 'scratch-turtle.svg';
+                    block.image    = 'sprites/turtle.svg';
                     break;
 
-    
+
                 // Events --------------------------------------
 
                 case 'onflag':
                     block.type     = 'block';
                     block.category = 'events starter';
                     block.command  = 'when {i} clicked';
-                    block.image    = 'scratch-flag.svg';
+                    block.image    = 'icons/flag.svg';
                     break;
 
                 case 'onkey':
@@ -397,14 +416,14 @@ var Scratch = (function (_self) {
                     block.type     = 'block';
                     block.category = 'movement';
                     block.command = 'turn {i} {1} degress';
-                    block.image   = 'scratch-right.svg';
+                    block.image   = 'icons/right.svg';
                     break;
 
                 case 'turnCCW':
                     block.type     = 'block';
                     block.category = 'movement';
                     block.command = 'turn {i} {1} degrees';
-                    block.image   = 'scratch-left.svg';
+                    block.image   = 'icons/left.svg';
                     break;
 
                 case 'goto':
@@ -520,7 +539,7 @@ var Scratch = (function (_self) {
                     block.type     = 'block';
                     block.ending    = true;
                     block.command   = '{i}';
-                    block.image     = 'scratch-repeat.svg';
+                    block.image     = 'icons/repeat.svg';
                     break;
 
                 case 'if':

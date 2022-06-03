@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 480 360" xmlns="http://www.w3.org/2000/svg">
+  <rect width="480" height="360" style="fill: rgb(137, 163, 188);"/>
+  <g>
+    <title>Grid</title>
+    <line style="fill: rgb(216, 216, 216); stroke-width: 2px; stroke: rgba(255, 255, 255, 0.16);" x1="30" y1="0" x2="30" y2="360"/>
+    <line style="fill: rgb(216, 216, 216); stroke-width: 2px; stroke: rgba(255, 255, 255, 0.16);" x1="90" y1="0" x2="90" y2="360"/>
+    <line style="fill: rgb(216, 216, 216); stroke-width: 2px; stroke: rgba(255, 255, 255, 0.16);" x1="150" y1="0" x2="150" y2="360"/>
+    <line style="fill: rgb(216, 216, 216); stroke-width: 2px; stroke: rgba(255, 255, 255, 0.16);" x1="210" y1="0" x2="210" y2="360"/>
+    <line style="fill: rgb(216, 216, 216); stroke-width: 2px; stroke: rgba(255, 255, 255, 0.16);" x1="270" y1="0" x2="270" y2="360"/>
+    <line style="fill: rgb(216, 216, 216); stroke-width: 2px; stroke: rgba(255, 255, 255, 0.16);" x1="330" y1="0" x2="330" y2="360"/>
+    <line style="fill: rgb(216, 216, 216); stroke-width: 2px; stroke: rgba(255, 255, 255, 0.16);" x1="390" y1="0" x2="390" y2="360"/>
+    <line style="fill: rgb(216, 216, 216); stroke-width: 2px; stroke: rgba(255, 255, 255, 0.16);" x1="450" y1="0" x2="450" y2="360"/>
+    <line style="fill: rgb(216, 216, 216); stroke-width: 2px; stroke: rgba(255, 255, 255, 0.16);" x1="0" y1="30" x2="480" y2="30"/>
+    <line style="fill: rgb(216, 216, 216); stroke-width: 2px; stroke: rgba(255, 255, 255, 0.16);" x1="0" y1="90" x2="480" y2="90"/>
+    <line style="fill: rgb(216, 216, 216); stroke-width: 2px; stroke: rgba(255, 255, 255, 0.16);" x1="0" y1="150" x2="480" y2="150"/>
+    <line style="fill: rgb(216, 216, 216); stroke-width: 2px; stroke: rgba(255, 255, 255, 0.16);" x1="0" y1="210" x2="480" y2="210"/>
+    <line style="fill: rgb(216, 216, 216); stroke-width: 2px; stroke: rgba(255, 255, 255, 0.16);" x1="0" y1="270" x2="480" y2="270"/>
+    <line style="fill: rgb(216, 216, 216); stroke-width: 2px; stroke: rgba(255, 255, 255, 0.16);" x1="0" y1="330" x2="480" y2="330"/>
+  </g>
+</svg>

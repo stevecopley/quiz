@@ -23,12 +23,16 @@ point (45)
 
 stage [grid]
   spriteinfo (x: 100) (y: -50) (angle: 45)
-  spriteinfo (x: -150) (y: -80) (angle: -90) (i:bee)
-  sprite (i:beetle1)  (x: -200) (y: 100) (s:50)
-  sprite (i:beetle2)  (x: -100) (y: 100) (s:50)
-  sprite (i:beetle3)  (x:    0) (y: 100) (s:50)
-  sprite (i:ladybird) (x:  100) (y: 100) (s:50)
-  sprite (i:ant)      (x:  200) (y: 100) (s:50)
+  spriteinfo (i:dog) (x: -150) (y: -80)
+  sprite (i:bug1)  (x: -200) (y: 130) (s: 70)
+  sprite (i:bug2)  (x: -100) (y: 130) (s: 70)
+  sprite (i:bug3)  (x:    0) (y: 130) (s: 70)
+  sprite (i:bug4)  (x:  100) (y: 130) (s: 70)
+  sprite (i:bug5)  (x:  200) (y: 130) (s: 70)
+  sprite (i:alien1)  (x: -150) (y: 50) (s: 70)
+  sprite (i:alien2)  (x:  -50) (y: 50) (s: 70)
+  sprite (i:alien3)  (x:   50) (y: 50) (s: 70)
+  sprite (i:alien4)  (x:  150) (y: 50) (s: 70)
 endstage
 ```
 

@@ -71,11 +71,12 @@ code.language-scratch,
 code.language-scratch .stage {
     width: 100%;
     max-width: 480px;
+    box-sizing: content-box;
     aspect-ratio: 4 / 3;
     background-color: var(--stage-back);
     border: 2px solid var(--stage-border);
     position: relative;
-    background-image: url('../images/scratch-stage.svg');
+    background-image: url('../images/scratch/stage/axes.svg');
     background-position: center;
     background-size: contain;
 }
@@ -93,7 +94,7 @@ code.language-scratch {
     --sprite-y: 0;
     --sprite-angle: 0;
     --sprite-size: 100;
-    --sprite-image: url('../images/scratch-turtle.svg');
+    --sprite-image: url('../images/scratch/sprites/turtle.svg');
 }
 
 
@@ -102,10 +103,10 @@ code.language-scratch .sprite {
 
     --scaled-width:  calc(100% * (var(--sprite-size) / 480));
     --scaled-height: calc(100% * (var(--sprite-size) / 360));
-  
+
     width: var(--scaled-width);
     height: var(--scaled-height);
-  
+
     left:   calc((100% * ((240 + var(--sprite-x)) / 480)) - (var(--scaled-width) / 2));
     bottom: calc((100% * ((180 + var(--sprite-y)) / 360)) - (var(--scaled-height) / 2));
 }
@@ -115,14 +116,15 @@ code.language-scratch .sprite img {
     width: 100%;
     height: 100%;
     transform: rotate( calc(1deg * var(--sprite-angle)) );
+    filter: drop-shadow(0 0.1rem 0.1rem #0008);
 }
 
 code.language-scratch .sprite .value {
     position: absolute;
     left: 100%;
     white-space: nowrap;
-    padding: 0.1rem 0.2rem;
-    border-radius: 0.3rem;
+    padding: 0.15em 0.4em 0.2em;
+    border-radius: 0.3em;
     font-size: 0.8rem;
     line-height: 1;
     font-weight: normal;
@@ -135,16 +137,16 @@ code.language-scratch .sprite.noinfo .value {
     display: none;
 }
 
-code.language-scratch .sprite .value:nth-of-type(1) { top: calc(50% - 2.20rem); }
-code.language-scratch .sprite .value:nth-of-type(2) { top: calc(50% - 1.10rem); }
-code.language-scratch .sprite .value:nth-of-type(3) { top: calc(50% + 0.00rem); }
-code.language-scratch .sprite .value:nth-of-type(4) { top: calc(50% + 1.10rem); }
+code.language-scratch .sprite .value:nth-of-type(1) { top: calc(50% - 3.00em); }
+code.language-scratch .sprite .value:nth-of-type(2) { top: calc(50% - 1.50em); }
+code.language-scratch .sprite .value:nth-of-type(3) { top: calc(50% + 0.00em); }
+code.language-scratch .sprite .value:nth-of-type(4) { top: calc(50% + 1.50em); }
 code.language-scratch .sprite .value:nth-of-type(n+5) { display: none; }
 
-code.language-scratch .sprite .value.sprite-x     { background-color: var(--block-move); }
-code.language-scratch .sprite .value.sprite-y     { background-color: var(--block-move); }
-code.language-scratch .sprite .value.sprite-angle { background-color: var(--block-move); }
-code.language-scratch .sprite .value.sprite-size  { background-color: var(--block-look); }
+code.language-scratch .sprite .value.sprite-x     { background-color: var(--border-move); }
+code.language-scratch .sprite .value.sprite-y     { background-color: var(--border-move); }
+code.language-scratch .sprite .value.sprite-angle { background-color: var(--border-move); }
+code.language-scratch .sprite .value.sprite-size  { background-color: var(--border-look); }
 code.language-scratch .sprite .value.sprite-image { display: none; }
 
 code.language-scratch .sprite .value.sprite-x::before     { content: 'x: '; }
