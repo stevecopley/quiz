@@ -31,8 +31,8 @@ var Scratch = (function (_self) {
 
 
         postProcess: function ( element ) {
-            _.processSprites( element );
             _.processStages( element );
+            _.processStageItems( element );
         },
 
 
@@ -43,30 +43,36 @@ var Scratch = (function (_self) {
                 const headers = stage.querySelectorAll( 'header' );
                 if( headers.length > 0 ) {
                     const header = headers[0];
-                    const imageValues = header.querySelectorAll( '.value' );
-                    if( imageValues.length > 0 ) {
-                        const imageVal = imageValues[0].textContent;
-
-                        stage.style.backgroundImage = `url('images/scratch/stages/${imageVal}.svg')`;
+                    const backValues = header.querySelectorAll( '.value' );
+                    if( backValues.length > 0 ) {
+                        const backVal = backValues[0].textContent;
+                        // Is this a colour hex code?
+                        if( backVal[0] == '#' ) stage.style.backgroundColor = backVal;
+                        // Or an image?
+                        else stage.style.backgroundImage = `url('images/scratch/stages/${backVal}.svg')`;
                     }
                 }
 			} );
         },
 
 
-        processSprites: function ( element ) {
-			const sprites = Array.prototype.slice.apply( element.querySelectorAll( '.sprite' ) );
+        processStageItems: function ( element ) {
+			const items = Array.prototype.slice.apply( element.querySelectorAll( '.stage-item' ) );
 
-            sprites.forEach( sprite => {
+            items.forEach( item => {
                 let info = {
-                    x: 0,
-                    y: 0,
+                    x:     0,
+                    y:     0,
                     angle: 0,
-                    size: 100,
-                    name: 'turtle'
+                    size:  100,
+                    name:  'turtle',
+                    col:   '#f00',
+                    opac:  1.0,
+                    say:   '',
+                    num:   1
                 }
 
-                const attrs = Array.prototype.slice.apply( sprite.querySelectorAll( '.value' ) );
+                const attrs = Array.prototype.slice.apply( item.querySelectorAll( '.value' ) );
 
                 attrs.forEach( attr => {
                     const attrVal = attr.textContent;
@@ -75,23 +81,33 @@ var Scratch = (function (_self) {
                     let yVal = attrVal.match( /y:\s*(-*[0-9]+)/ );
                     let aVal = attrVal.match( /(a|\bangle\b):\s*(-*[0-9]+)/ );
                     let sVal = attrVal.match( /(s|\bsize\b):\s*([0-9]+)/ );
+                    let oVal = attrVal.match( /(o|\bopacity\b):\s*([0-9\.]+)/ );
                     let iVal = attrVal.match( /(i|\bimage\b):\s*([A-Za-z0-9]+)/ );
+                    let cVal = attrVal.match( /(c|\bcol\b|\bcolour\b):\s*(#?[A-Za-z0-9]+)/ );
+                    let mVal = attrVal.match( /(m|\bmessage\b|\bsay\b):\s*([A-Za-z0-9\s\.\!\?]+)/ );
+                    let nVal = attrVal.match( /(n|\bnum\b|\bnumber\b):\s*([0-9]+)/ );
 
-                    if( xVal !== null ) { xVal = xVal[1]; info.x     = xVal; attr.innerHTML = xVal; attr.classList.add( 'sprite-x' ); }
-                    if( yVal !== null ) { yVal = yVal[1]; info.y     = yVal; attr.innerHTML = yVal; attr.classList.add( 'sprite-y' ); }
-                    if( aVal !== null ) { aVal = aVal[2]; info.angle = aVal; attr.innerHTML = aVal; attr.classList.add( 'sprite-angle' ); }
-                    if( sVal !== null ) { sVal = sVal[2]; info.size  = sVal; attr.innerHTML = sVal; attr.classList.add( 'sprite-size' ); }
-                    if( iVal !== null ) { iVal = iVal[2]; info.name  = iVal; attr.innerHTML = iVal; attr.classList.add( 'sprite-image' ); }
+                    if( xVal !== null ) { xVal = xVal[1]; info.x     = xVal; attr.innerHTML = xVal; attr.classList.add( 'item-x' ); }
+                    if( yVal !== null ) { yVal = yVal[1]; info.y     = yVal; attr.innerHTML = yVal; attr.classList.add( 'item-y' ); }
+                    if( aVal !== null ) { aVal = aVal[2]; info.angle = aVal; attr.innerHTML = aVal; attr.classList.add( 'item-angle' ); }
+                    if( sVal !== null ) { sVal = sVal[2]; info.size  = sVal; attr.innerHTML = sVal; attr.classList.add( 'item-size' ); }
+                    if( oVal !== null ) { oVal = oVal[2]; info.opac  = oVal; attr.innerHTML = oVal; attr.classList.add( 'item-opacity' ); }
+                    if( iVal !== null ) { iVal = iVal[2]; info.name  = iVal; attr.innerHTML = iVal; attr.classList.add( 'item-image' ); }
+                    if( cVal !== null ) { cVal = cVal[2]; info.col   = cVal; attr.innerHTML = cVal; attr.classList.add( 'item-colour' ); }
+                    if( mVal !== null ) { mVal = mVal[2]; info.say   = mVal; attr.innerHTML = mVal; attr.classList.add( 'item-say' ); }
+                    if( nVal !== null ) { nVal = nVal[2]; info.num   = nVal; attr.innerHTML = nVal; attr.classList.add( 'item-number' ); }
                 } );
 
                 let cssVars = '';
-                cssVars += `--sprite-x:     ${info.x}; `;
-                cssVars += `--sprite-y:     ${info.y}; `;
-                cssVars += `--sprite-angle: ${info.angle}; `;
-                cssVars += `--sprite-size:  ${info.size}; `;
-                cssVars += `--sprite-image: url('../images/scratch/sprites/${info.name}.svg'); `;
+                cssVars += `--item-x:       ${info.x}; `;
+                cssVars += `--item-y:       ${info.y}; `;
+                cssVars += `--item-angle:   ${info.angle}; `;
+                cssVars += `--item-size:    ${info.size}; `;
+                cssVars += `--item-opacity: ${info.opac}; `;
+                cssVars += `--item-colour:  ${info.col}; `;
+                cssVars += `--item-image:   url('../images/scratch/sprites/${info.name}.svg'); `;
 
-                sprite.style = cssVars;
+                item.style = cssVars;
 			} );
         },
 
@@ -113,21 +129,82 @@ var Scratch = (function (_self) {
         },
 
 
-        processColours: function ( code ) {
-            // <div class="colour value ">BLUE</div>
-            code = code.replace( /<div\s*?class="\s*?(colour|value)\s+(colour|value)\s*?">(.+?)<\/div>/g,
-                                 '<div class="value colour" style="--back-col: $3;">&nbsp;</div>' );
+        parseLine: function ( line ) {
+            let token = _.tokenise( line.trim() );
 
-            return code;
+            if( token.op === null ) return null;
+
+            for( let i = 0; i < token.args.length; i++ ) {
+                const argToken = _.parseLine( token.args[i] );
+                if( argToken ) token.args[i] = argToken;
+            }
+
+            return token;
         },
 
 
-        processVariables: function ( code ) {
-            // <div class="value ">%score%</div>
-            code = code.replace( /<div\s*?class="\s*?value\s*?">%(.+?)%<\/div>/g,
-                                 '<div class="value variable">$1</div>' );
+        tokenise: function ( line ) {
+            const groupStarters = '([{';
+            const groupEndings  = ')]}';
 
-            return code;
+            console.log( '>>>' );
+            console.log( line );
+
+            let token = {
+                op: null,
+                args: []
+            };
+            let fragment = '';
+            let depth = 0;
+
+            // Bail out if empty line
+            if( line.trim().length == 0 ) return token;
+
+            // Bail out if no more groupings
+            let groupings = false;
+            groupStarters.split( '' ).forEach( starter => {
+                if( line.includes( starter ) ) groupings = true;
+            } );
+            if( !groupings ) {
+                console.log( '*** no more groups' );
+                token.op = line;
+                return token;
+            }
+
+            // Ok, must have some groupings to parse...
+            line.trim().split( '' ).forEach( character => {
+                // End of a non-grouped word? Must be the operator
+                if( character === ' ' && depth == 0 && fragment !== '' ) {
+                    token.op = fragment;
+                    fragment = '';
+                }
+                else {
+                    // Save char (as long as not leading spaces)
+                    if( fragment !== '' || character !== ' ' ) {
+                        fragment += character;
+                    }
+
+                    // Start of a group?
+                    if( groupStarters.includes( character ) ) {
+                        depth++;
+                    }
+                    // End of a group?
+                    else if( groupEndings.includes( character ) ) {
+                        depth--;
+
+                        // top-level group?
+                        if( depth == 0 ) {
+                            // Yep, so grab contents and start over
+                            token.args.push( fragment.slice( 1, -1 ) );
+                            fragment = '';
+                        }
+                    }
+                }
+            } );
+
+            console.log( token );
+
+            return token;
         },
 
 
@@ -201,91 +278,22 @@ var Scratch = (function (_self) {
         },
 
 
-        matchCommand: function( cmd ) {
-            let block = {
-                type: 'unknown',
-                command: '',
-                image: null,
-                container: false,
-                ending: false
-            };
-
-            if( cmd in commands ) return commands[cmd];
-
-            return cmd;
+        processColours: function ( code ) {
+            // <div class="colour value ">BLUE</div>
+            code = code.replace( /<div\s*?class="\s*?(colour|value)\s+(colour|value)\s*?">(.+?)<\/div>/g,
+                                 '<div class="value colour" style="--back-col: $3;">&nbsp;</div>' );
+            return code;
         },
 
 
-        parseLine: function ( line ) {
-            let token = _.tokenise( line.trim() );
-
-            if( token.op === null ) return null;
-
-            for( let i = 0; i < token.args.length; i++ ) {
-                const argToken = _.parseLine( token.args[i] );
-                if( argToken ) token.args[i] = argToken;
-            }
-
-            return token;
+        processVariables: function ( code ) {
+            // <div class="value ">%score%</div>
+            code = code.replace( /<div\s*?class="\s*?value\s*?">%(.+?)%<\/div>/g,
+                                 '<div class="value variable">$1</div>' );
+            return code;
         },
 
 
-        tokenise: function ( line ) {
-            const groupStarters = '([{';
-            const groupEndings  = ')]}';
-
-            let token = {
-                op: null,
-                args: []
-            };
-            let fragment = '';
-            let depth = 0;
-
-            // Bail out if empty line
-            if( line.trim().length == 0 ) return token;
-
-            // Bail out if no more groupings
-            let groupings = false;
-            groupStarters.split( '' ).forEach( starter => {
-                if( line.includes( starter ) ) groupings = true;
-            } );
-            if( !groupings ) {
-                token.op = line;
-                return token;
-            }
-
-            // Ok, must have some groupings to parse...
-            line.trim().split( '' ).forEach( character => {
-                // End of a non-grouped word? Must be the operator
-                if( character === ' ' && depth == 0 && fragment !== '' ) {
-                    token.op = fragment;
-                    fragment = '';
-                }
-                else {
-                    // Start of a group?
-                    if( groupStarters.includes( character ) ) {
-                        depth++;
-                    }
-                    // End of a group?
-                    else if( groupEndings.includes( character ) ) {
-                        depth--;
-
-                        // top-level group?
-                        if( depth == 0 ) {
-                            // Yep, so grab contents.
-                            token.args.push( fragment );
-                            fragment = '';
-                        }
-                    }
-                    // Save any other non-space char
-                    else if( character !== ' ' ) {
-                        fragment += character;
-                    }
-                }
-            } );
-
-            return token;
-        },
 
 
         identifyBlock: function ( cmd ) {
@@ -317,20 +325,55 @@ var Scratch = (function (_self) {
                     break;
 
 
-                // Sprite --------------------------------------
+                // Sprites --------------------------------------
 
                 case 'sprite':
-                    block.type     = 'sprite';
-                    block.category = 'noinfo';
-                    block.command  = '{i} {1} {2} {3} {4} {5}';
+                    block.type     = 'stage-item';
+                    block.category = 'sprite noinfo';
+                    block.command  = '{i} {1} {2} {3} {4} {5} {6}';
                     block.image    = 'sprites/turtle.svg';
                     break;
 
                 case 'spriteinfo':
-                    block.type     = 'sprite';
-                    block.category = 'showinfo';
-                    block.command  = '{i} {1} {2} {3} {4} {5}';
+                    block.type     = 'stage-item';
+                    block.category = 'sprite showinfo';
+                    block.command  = '{i} {1} {2} {3} {4} {5} {6}';
                     block.image    = 'sprites/turtle.svg';
+                    break;
+
+                // Stage Markers --------------------------------------
+
+                case 'arrow':
+                    block.type     = 'stage-item';
+                    block.category = 'arrow';
+                    block.command  = '{1} {2} {3} {4} {5}';
+                    break;
+
+                case 'circle':
+                    block.type     = 'stage-item';
+                    block.category = 'circle';
+                    block.command  = '{1} {2} {3} {4} {5}';
+                    break;
+
+                case 'square':
+                    block.type     = 'stage-item';
+                    block.category = 'square';
+                    block.command  = '{1} {2} {3} {4} {5}';
+                    break;
+
+                case 'number':
+                    block.type     = 'stage-item';
+                    block.category = 'number';
+                    block.command  = '{1} {2} {3} {4} {5}';
+                    break;
+
+
+                // Question --------------------------------------
+
+                case 'question':
+                    block.type     = 'question';
+                    block.command  = '{1} {2} {i}';
+                    block.image    = 'icons/tick.svg';
                     break;
 
 
@@ -374,61 +417,61 @@ var Scratch = (function (_self) {
                     break;
 
 
-                // Movement --------------------------------------
+                // Motion --------------------------------------
 
                 case 'move':
                     block.type     = 'block';
-                    block.category = 'movement';
+                    block.category = 'motion';
                     block.command = 'move {1} steps';
                     break;
 
                 case 'setx':
                     block.type     = 'block';
-                    block.category = 'movement';
+                    block.category = 'motion';
                     block.command = 'set x to {1}';
                     break;
 
                 case 'sety':
                     block.type     = 'block';
-                    block.category = 'movement';
+                    block.category = 'motion';
                     block.command = 'set y to {1}';
                     break;
 
                 case 'changex':
                     block.type     = 'block';
-                    block.category = 'movement';
+                    block.category = 'motion';
                     block.command = 'change x by {1}';
                     break;
 
                 case 'changey':
                     block.type     = 'block';
-                    block.category = 'movement';
+                    block.category = 'motion';
                     block.command = 'change y by {1}';
                     break;
 
                 case 'point':
                     block.type     = 'block';
-                    block.category = 'movement';
+                    block.category = 'motion';
                     block.command = 'point in direction {1}';
                     break;
 
                 case 'turnCW':
                     block.type     = 'block';
-                    block.category = 'movement';
+                    block.category = 'motion';
                     block.command = 'turn {i} {1} degress';
                     block.image   = 'icons/right.svg';
                     break;
 
                 case 'turnCCW':
                     block.type     = 'block';
-                    block.category = 'movement';
+                    block.category = 'motion';
                     block.command = 'turn {i} {1} degrees';
                     block.image   = 'icons/left.svg';
                     break;
 
                 case 'goto':
                     block.type     = 'block';
-                    block.category = 'movement';
+                    block.category = 'motion';
                     block.command = 'goto x: {1} y: {2}';
                     break;
 
@@ -465,16 +508,10 @@ var Scratch = (function (_self) {
                     block.command = 'set size to {1} %';
                     break;
 
-                case 'changesize':
+                case 'chsize':
                     block.type     = 'block';
                     block.category = 'looks';
                     block.command = 'change size by {1}';
-                    break;
-
-                case 'show':
-                    block.type     = 'block';
-                    block.category = 'looks';
-                    block.command = 'show';
                     break;
 
 
@@ -534,7 +571,6 @@ var Scratch = (function (_self) {
                     block.container = true;
                     break;
 
-                case 'endfor':
                 case 'endrep':
                     block.type     = 'block';
                     block.ending    = true;
@@ -605,16 +641,22 @@ var Scratch = (function (_self) {
                     break;
 
 
-                case 'touchmouse':
+                case 'touch':
                     block.type     = 'sub-block';
                     block.category = 'sensing logic';
-                    block.command  = 'touching [mouse pointer] ?';
+                    block.command  = 'touching [1] ?';
                     break;
 
-                case 'touchedge':
-                    block.type     = 'sub-block';
-                    block.category = 'sensing logic';
-                    block.command  = 'touching [edge] ?';
+                case 'pointer':
+                    block.type     = 'value';
+                    block.category = 'sensing';
+                    block.command  = 'mouse pointer';
+                    break;
+
+                case 'edge':
+                    block.type     = 'value';
+                    block.category = 'sensing';
+                    block.command  = 'edge';
                     break;
 
                 case 'touchcol':
@@ -746,19 +788,19 @@ var Scratch = (function (_self) {
 
                 case 'x':
                     block.type     = 'value';
-                    block.category = 'move';
+                    block.category = 'motion';
                     block.command  = 'x value';
                     break;
 
                 case 'y':
                     block.type     = 'value';
-                    block.category = 'move';
+                    block.category = 'motion';
                     block.command  = 'y value';
                     break;
 
                 case 'dir':
                     block.type     = 'value';
-                    block.category = 'move';
+                    block.category = 'motion';
                     block.command  = 'direction';
                     break;
 
@@ -766,12 +808,6 @@ var Scratch = (function (_self) {
                     block.type     = 'value';
                     block.category = 'looks';
                     block.command  = 'size';
-                    break;
-
-                case 'distmouse':
-                    block.type     = 'value';
-                    block.category = 'sensing';
-                    block.command  = 'distance to [mouse pointer]';
                     break;
 
                 case 'ans':
