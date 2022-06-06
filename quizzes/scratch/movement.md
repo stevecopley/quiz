@@ -1,4 +1,5 @@
 # Scratch Movement
+
 --
 scratch
 
@@ -42,9 +43,6 @@ goto (0) (0)
 1. The sprite will move to the centre of the stage
 2. The sprite will move to the top-left corner of the stage
 3. The sprite will move to the bottom-left corner of the stage
-
---
-1
 
 --
 The centre of the Scratch stage is (0,0)
@@ -92,9 +90,6 @@ endstage
     goto (-100) (-100)
     goto (-100) (100)
     ```
-
---
-1
 
 --
 The left of the stage is negative x, the right is positive x

@@ -47,6 +47,7 @@ The format of a quiz is as follows:
 --
 language
 
+
 -------------------------------------------------
 ## Introduction
 
@@ -55,23 +56,23 @@ Section of text / info / notes re. the quiz
 --
 Second (optional) section of text re. the quiz
 
+
 -------------------------------------------------
 ## Q1 Title
 
 The question, including code snippets, etc.
 
 --
-Info concerning the answers, then a list of answers:
+Info concerning the answers, then a list of answers (from two to four):
 
-1. First answer
+1. First answer (this should be the **correct** one)
 2. Second answer
-3. etc. (any number of answers)
-
---
-3 (the no. of the correct answer)
+3. Third answer (optional)
+4. Forth answer (optional)
 
 --
 Feedback to present when the correct answer is given
+
 
 -------------------------------------------------
 ## Q2 Title
@@ -80,6 +81,8 @@ Etc...
 ```
 
 Note: The '--' separators are *not* valid Markdown, but serve as a clear indicator between sections
+
+The answers will always be displayed to the user in a *random order*. The order of the answers in the Markdown file is only important in that the **correct** answer must be the **first** one.
 
 
 # Scratch Support

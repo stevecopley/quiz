@@ -1,4 +1,4 @@
-// Holds the list of quizzes read from the config file 
+// Holds the list of quizzes read from the config file
 let quizzes = null;
 
 // Main quiz object, holds current quiz data after laded from file
@@ -71,18 +71,18 @@ async function initialiseQuiz() {
                 menuItem.appendChild( menuLink );
                 menuLink.textContent = quizName;
                 menuLink.href = '#';
-                menuLink.addEventListener( 'click', () => { 
+                menuLink.addEventListener( 'click', () => {
                     sessionStorage.setItem( 'currentQuestion', 0 );
-                    loadQuiz( quizURL ); 
+                    loadQuiz( quizURL );
                 } );
-            } );    
+            } );
         }
     } );
 }
 
 
 /**
- * Shows an overview of all quizzes, including any progress made during the 
+ * Shows an overview of all quizzes, including any progress made during the
  * current session
  */
 function showOverview() {
@@ -156,9 +156,9 @@ function showOverview() {
                         starBlock.classList.add( 'has' + numStars );
                         questionItem.appendChild( starBlock );
                         // Can click directly to that question
-                        questionItem.addEventListener( 'click', () => { 
+                        questionItem.addEventListener( 'click', () => {
                             sessionStorage.setItem( 'currentQuestion', qNum );
-                            loadQuiz( quizURL ); 
+                            loadQuiz( quizURL );
                         }, true );
                         questionList.appendChild( questionItem );
                     } );
@@ -174,15 +174,15 @@ function showOverview() {
                     const notStarted  = document.createElement( 'p' );
                     notStarted.innerText = 'Not attempted';
                     quizItem.appendChild( notStarted );
-                }               
+                }
 
                 // Can click to the quiz
-                quizItem.addEventListener( 'click', () => { 
+                quizItem.addEventListener( 'click', () => {
                     sessionStorage.setItem( 'currentQuestion', 0 );
-                    loadQuiz( quizURL ); 
+                    loadQuiz( quizURL );
                 }, true );
                 quizTypeList.appendChild( quizItem );
-            } );    
+            } );
         }
     } );
 }
@@ -191,8 +191,8 @@ function showOverview() {
 /** ***************************************************************
  * Loads a quiz from a given URL (within the quizzes folder)
  * Quiz data is stored in a quiz object, and the session has objects created
- * to store answer progress. 
- * 
+ * to store answer progress.
+ *
  * @param {string} url the URL of the quiz to load
  */
 async function loadQuiz( url ) {
@@ -228,7 +228,7 @@ async function loadQuiz( url ) {
         // Second part is the language if relevant
         if( quizInfo[1] ) quiz.language = quizInfo[1].trim();
     }
-    
+
     title.innerHTML = quiz.title;
     quiz.questions = [];
 
@@ -248,10 +248,8 @@ async function loadQuiz( url ) {
             // Does answer have an ordered list of answers in it? If so, count the list items (assumes only a single list!)
             if( questionsHTML.includes( '<ol>' ) ) question['answerCount'] = questionsHTML.split( '<li>' ).length - 1;
         }
-        // Third is always the correct answer (if present)
-        if( parts[2] ) question['correctAnswer'] = parseInt( parts[2].trim() );
-        // Forth is always the feedback (if present)
-        if( parts[3] ) question['feedbackMD'] = parts[3].trim();
+        // Third is always the feedback (if present)
+        if( parts[2] ) question['feedbackMD'] = parts[2].trim();
 
         // And add it to the question list
         quiz.questions.push( question );
@@ -272,7 +270,7 @@ async function loadQuiz( url ) {
 
 /** ***************************************************************
  * Loads a given markdown file
- * 
+ *
  * @param {string} url the URL of the markdown file to load
  * @returns the MD text from the file, null otherwise
  */
@@ -286,7 +284,7 @@ async function getMarkdown( url ) {
 
 /** ***************************************************************
  * Loads a given JSON file
- * 
+ *
  * @param {string} url the URL of the JSON file to load
  * @returns the JSON object obtained from the file, null otherwise
  */
@@ -308,7 +306,7 @@ function closeMenu() {
     // Close the mobile menu
     const menuToggle = document.getElementById( 'toggle' );
     if( menuToggle ) menuToggle.checked = false;
-   
+
     // Close desktop menu
     const dropdowns = document.querySelectorAll( '.main-nav-section' );
     dropdowns.forEach( dropdown => {
@@ -321,9 +319,9 @@ function closeMenu() {
 
 
 /**
- * Creates a DIV container with the appropriate numb er of child DIVs to act 
+ * Creates a DIV container with the appropriate numb er of child DIVs to act
  * as stars (via CSS)
- * 
+ *
  * @param {number} numStars the number of stars required (1-4)
  * @param {boolean} small default false, if true adds 'small' to class list
  * @returns a DIV element with the stars inside
@@ -346,7 +344,7 @@ function createStars( numStars, small=false ) {
  * in the current quiz. The first marker is always assumed to be an intro
  * so displays an (i) symbol. otherwise it's a question. This results in
  * Q1 having an index of 1, Q2, index of 2, etc.
- * 
+ *
  * Click event handlers are added to each question marker to show the question,
  * and to the next / previous markers
  */
@@ -402,14 +400,14 @@ function buildQuestionNav() {
 
 /** ***************************************************************
  * Switch to another question based on a given offset from the current question
- * 
- * @param {number} offset the offset to add to the current question, e.g. -1 
+ *
+ * @param {number} offset the offset to add to the current question, e.g. -1
  */
 function showQuestionWithOffset( offset ) {
     // Do we know where we are already?
     let currentQuestion = sessionStorage.getItem( 'currentQuestion' );
     currentQuestion = currentQuestion === null ? 0 : parseInt( currentQuestion );
-    
+
     // Where are we going to?
     let questionToShow = currentQuestion + offset;
     // Force into valid range
@@ -424,7 +422,7 @@ function showQuestionWithOffset( offset ) {
  * Displays the given question to the user, coniguring the answers with click
  * event handlers, updating the progress nav, and storing the progress in
  * the session
- * 
+ *
  * @param {number} qNum the question to display
  */
 function showQuestion( qNum ) {
@@ -433,7 +431,7 @@ function showQuestion( qNum ) {
     const answBlock = document.getElementById( 'answers' );
     const feedback = document.getElementById( 'feedback' );
     const message  = document.getElementById( 'feedback-message' );
- 
+
     quizBlock.className = 'show';
     feedback.className = 'hide';
 
@@ -450,9 +448,9 @@ function showQuestion( qNum ) {
 
     // Sort out the syntax highlighting for inline as well as blocks of code
     const codeBlocks = document.querySelectorAll( 'code' );
-    codeBlocks.forEach( block => { 
-        block.classList.add( quiz.language ); 
-        block.classList.add( 'language-' + quiz.language ); 
+    codeBlocks.forEach( block => {
+        block.classList.add( quiz.language );
+        block.classList.add( 'language-' + quiz.language );
     } );
     Prism.highlightAll();
     if( quiz.language == 'scratch' ) Scratch.highlightAll();
@@ -465,7 +463,8 @@ function showQuestion( qNum ) {
         let correctAnswerElement = null;
 
         for( let aNum = 1; aNum <= numAnswers; aNum++ ) {
-            const isCorrect = aNum == question.correctAnswer;
+            // First answer is always the correect one (however, answers displayed in rand order)
+            const isCorrect = aNum == 1;
             const ansElem = answers[aNum-1];
 
             ansElem.addEventListener( 'click', (e) => { markAnswer( e, qNum, isCorrect ); } );
@@ -486,7 +485,7 @@ function showQuestion( qNum ) {
     updateQuestionNav( qNum );
 
     // Save where we're at
-    sessionStorage.setItem( 'currentQuestion', qNum );      
+    sessionStorage.setItem( 'currentQuestion', qNum );
 }
 
 
@@ -526,25 +525,25 @@ function setupQuestionProgress() {
 
 /**
  * Updates the attempt count and answered state of a given question in the session
- * 
+ *
  * @param {number} qNum the question to update the status of
  * @param {boolean} isCorrect true if the question has been answered correctly
  */
 function updateQuestionProgress( qNum, isCorrect ) {
-    // Attempt to get the URL of current quiz. 
+    // Attempt to get the URL of current quiz.
     const currentQuiz = sessionStorage.getItem( 'currentQuiz' );
     // Attempt to get progress from session
     let progress = sessionStorage.getItem( 'progress' );
     // Bail out if anything amiss
     if( !progress || !currentQuiz ) return;
-    
+
     // JSONify it
     progress = JSON.parse( progress );
     // Bail out if anything amiss
     if( !progress[currentQuiz] || !progress[currentQuiz][qNum] ) return;
 
     // Set ques status
-    if( progress[currentQuiz][qNum].attempts < progress[currentQuiz][qNum].answers ) progress[currentQuiz][qNum].attempts++;    
+    if( progress[currentQuiz][qNum].attempts < progress[currentQuiz][qNum].answers ) progress[currentQuiz][qNum].attempts++;
     progress[currentQuiz][qNum].correct = isCorrect;
 
     // Save back into the session
@@ -560,32 +559,32 @@ function updateQuestionProgress( qNum, isCorrect ) {
  *  1 - all attemots incorrect until last
  *  ...
  *  max - correct first time
- * 
+ *
  * @param {number} qNum the question to get the status of
  * @param {text} quizURL the URL of the quiz. Default null and if so, current quiz
  * @returns the number of 'stars' a question's answer has earnt
  */
 function getQuestionProgress( qNum, quizURL=null ) {
-    // Attempt to get the URL of current quiz, if not given 
+    // Attempt to get the URL of current quiz, if not given
     if( quizURL === null ) quizURL = sessionStorage.getItem( 'currentQuiz' );
     // Attempt to get progress from session
     let progress = sessionStorage.getItem( 'progress' );
     // Bail out if anything amiss
     if( !progress || !quizURL ) return 0;
-    
+
     // JSONify it
     progress = JSON.parse( progress );
     // Bail out if anything amiss
     if( !progress[quizURL] || !progress[quizURL][qNum] ) return 0;
 
-    // Calculate ques progress (e.g. if 3 answers: 3 = right first time, 2 = right after 1 mistake, 
+    // Calculate ques progress (e.g. if 3 answers: 3 = right first time, 2 = right after 1 mistake,
     // 1 = right after 2 mistakes, 0 = not yet right)
     if( progress[quizURL][qNum].correct ) {
         return progress[quizURL][qNum].answers + 1 - progress[quizURL][qNum].attempts;
     }
     else {
         return 0;
-    }  
+    }
 }
 
 
@@ -593,7 +592,7 @@ function getQuestionProgress( qNum, quizURL=null ) {
  * Updates the nav bar, highlighting the current questuion and those
  * near it (for mobile views, only close neighbours are shown in the
  * nav due to limited screen width - handled by classes and CSS)
- * 
+ *
  * @param {number} qNum the current question number (0-max)
  */
  function updateQuestionNav( qNum ) {
@@ -627,7 +626,7 @@ function getQuestionProgress( qNum, quizURL=null ) {
 /**
  * Updates the classes of the given question marker so that the correct number
  * of stars is shown (via CSS)
- * 
+ *
  * @param {number} qNum the question number to update
  */
 function updateQuestionStars( qNum ) {
@@ -651,7 +650,7 @@ function updateQuestionStars( qNum ) {
 /** ***************************************************************
  * Marks an answer correct or not, giving feedback and
  * updating other status data / UI
- * 
+ *
  * @param {object} e the click event (from which can get the target)
  * @param {number} qNum the question number (1-max)
  * @param {boolean} isCorrect true if correct, false otherwise
@@ -666,13 +665,13 @@ function updateQuestionStars( qNum ) {
 
 
 
-/** 
+/**
  * Gives feedback for a given question and answer status (shown via CSS)
- * An incorrect question triggers a feedback panel which is only shown for a 
- * short time. A correct answer's feedback panel remains in view until the 
+ * An incorrect question triggers a feedback panel which is only shown for a
+ * short time. A correct answer's feedback panel remains in view until the
  * next question is loaded. Non right/wrong feedback can also be shown in the
  * case of previously answered questions
- * 
+ *
  * @param {boolean / null} isCorrect null for non-themed feedback, true/false otherwise
  */
 function showFeedback( isCorrect=null ) {
@@ -703,7 +702,7 @@ function showFeedback( isCorrect=null ) {
 /**
  * Updates the visual state of a given answer, styling it via CSS classes.
  * If an answer is correct, all other answers are marked as wrong
- * 
+ *
  * @param {object} ansElem the <li> to highlight
  * @param {boolean} isCorrect true if answered correctly
  */
