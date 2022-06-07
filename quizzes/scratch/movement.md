@@ -65,9 +65,11 @@ endstage
 ```
 
 --
-### Which codde move the alien?
+### Which code will work?
 
-1.  ```
+1.  This code...
+
+    ```
     onflag
     goto (-100) (-100)
     goto (-100) (100)
@@ -75,20 +77,14 @@ endstage
     goto (100) (-100)
     ```
 
-2.  ```
-    onflag
-    goto (-100) (-100)
-    goto (100) (100)
-    goto (-100) (100)
-    goto (100) (-100)
-    ```
+2.  This code...
 
-3.  ```
+    ```
     onflag
-    goto (100) (100)
-    goto (100) (-100)
     goto (-100) (-100)
+    goto (100) (100)
     goto (-100) (100)
+    goto (100) (-100)
     ```
 
 --

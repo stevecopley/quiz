@@ -185,6 +185,20 @@ function showOverview() {
             } );
         }
     } );
+
+    // Link to clear all progress in all quizzes
+    const clearBlock = document.createElement( 'p' );
+    clearBlock.id = 'clear-all';
+    const clearLink = document.createElement( 'a' );
+    clearLink.innerText = 'Clear Progess in All Quizzes';
+    clearLink.href = '#';
+    clearLink.className= 'button low';
+    clearLink.addEventListener( 'click', () => {
+        sessionStorage.clear();
+        initialiseQuiz();
+    }, true );
+    clearBlock.appendChild( clearLink );
+    overBlock.appendChild( clearBlock );
 }
 
 
@@ -200,13 +214,9 @@ async function loadQuiz( url ) {
     const infoBlock = document.getElementById( 'info' );
     const overBlock = document.getElementById( 'overview' );
 
-    // Load the file
+    // Load the file if we can, otherwise bail
     const quizMD = await getMarkdown( 'quizzes/' + url );
-    if( !quizMD ) {
-        sessionStorage.clear();
-        initialiseQuiz();
-        return;
-    }
+    if( !quizMD ) return;
 
     // Save the fact that we're doing this quiz
     sessionStorage.setItem( 'currentQuiz', url );

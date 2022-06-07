@@ -2,8 +2,8 @@
 
 
 :root {
-    --accent:         #64b5f6;
-    --accent-low:     #5f8aad;
+    --accent:         #81d4fa;
+    --accent-low:     #5e8497;
 
     --tone-very-light: #eceff1;
     --tone-light:      #78909c;
@@ -11,10 +11,10 @@
     --tone-dark:       #263238;
     --tone-very-dark:  #111;
 
-    --shadow:       0 0.25rem 0.5rem #0008;
-    --shadow-small: 0 0.10rem 0.2rem #0008;
-    --shadow-low:   0 0.50rem 0.5rem #0008;
+    --shadow:       0  0.25rem 0.5rem #0008;
+    --shadow-small: 0   0.1rem 0.2rem #0008;
     --shadow-high:  0 -0.25rem 0.5rem #0008;
+    --shadow-low:   0   0.5rem 0.5rem #0008;
 
     --overlay:      #0008;
 
@@ -51,6 +51,17 @@ h4 {
     font-weight: 300;
 }
 
+em, strong {
+    font-style: normal;
+    color: var(--accent);
+}
+
+strong {
+    font-weight: 500;
+}
+
+/*** LINKS *******************************************************/
+
 a {
     color: var(--accent);
     text-decoration: none;
@@ -60,14 +71,24 @@ a:hover {
     text-decoration: underline;
 }
 
-em, strong {
-    font-style: normal;
-    color: var(--accent);
+a.button {
+    display: inline-block;
+    background: var(--accent);
+    color: var(--tone-very-dark);
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.3rem;
 }
 
-strong {
-    font-weight: 500;
+a.button.low {
+    background-color: var(--accent-low);
 }
+
+a.button:hover,
+a.button.low:hover {
+    background: var(--tone-very-light);
+    text-decoration: none;
+}
+
 
 
 /*** HEADER *******************************************************/
@@ -213,12 +234,14 @@ strong {
         right: 0;
         top: 1.75rem;
         display: none;
+        flex-direction: column;
+        gap: 1rem;
         background-color: var(--tone-mid);
         border-radius: 0 0 0.5rem 0.5rem;
         box-shadow: var(--shadow-low);
         min-width: 100%;
         width: fit-content;
-        padding: 0.25rem 1rem 1rem;
+        padding: 1rem;
     }
 
     .main-nav-section:hover {
@@ -230,12 +253,11 @@ strong {
     }
 
     .main-nav-section:hover ul {
-        display: block;
+        display: flex;
     }
 
     .main-nav-section ul li {
-        width: 100%;
-        padding-top: 1rem;
+        padding-top: 0;
     }
 
     #main-nav a {
@@ -271,7 +293,7 @@ main {
 
 main > h1 {
     font-size: min(4rem, 10vw);
-    margin: 0 2.5rem 1rem;
+    margin: 0 2.5rem 2rem;
     text-align: center;
     color: var(--accent);
     text-shadow: 0.01em 0.03em 0 var(--tone-very-dark);
@@ -420,6 +442,10 @@ main li {
     background-color: var(--wrong-dark);
 }
 
+#clear-all {
+    padding-top: 1rem;
+    text-align: right;
+}
 
 /*** STARS *******************************************************/
 
