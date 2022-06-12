@@ -507,7 +507,7 @@ function processCodeBlocks( blocks ) {
     blocks.forEach( block => {
         let blockHTML = block.innerHTML;
         // Look for [#nnn] blocks above <pre> code blocks
-        blockHTML = blockHTML.replace( /<p>\[#([0-9\-]+)\]<\/p>[\n]?<pre>/g, 
+        blockHTML = blockHTML.replace( /<p>\[#([0-9\-]+)\]<\/p>[\n]?<pre>/g,
                                        `<pre class="line-numbers" data-line="$1">` );
         block.innerHTML = blockHTML;
     } );
@@ -628,6 +628,7 @@ function getQuestionProgress( qNum, quizURL=null ) {
     if( qNum < 0 || qNum > maxQ  ) return;
 
     const markers = document.getElementById( 'question-markers' ).children;
+    const nextQuesButton = document.getElementById( 'next-question' );
 
     // Clear out previous config
     for( const marker of markers ) marker.className = '';
@@ -647,6 +648,9 @@ function getQuestionProgress( qNum, quizURL=null ) {
 
     // Highlight current
     markers.item( qNum ).className = 'show current';
+
+    // Clear highlighted next button
+    nextQuesButton.classList.remove( 'highlight' );
 }
 
 
@@ -686,6 +690,13 @@ function updateQuestionStars( qNum ) {
     showFeedback( isCorrect );
     setAnswerState( e.target, isCorrect );
 
+    // Highlight the 'next' button if question correct
+    const maxQ = quiz.questions.length - 1;
+    if( isCorrect && qNum < maxQ ) {
+        const nextQuesButton = document.getElementById( 'next-question' );
+        nextQuesButton.classList.add( 'highlight' );
+    }
+
     updateQuestionProgress( qNum, isCorrect );
     updateQuestionStars( qNum );
 }
@@ -710,6 +721,11 @@ function showFeedback( isCorrect=null ) {
             feedbackTimeout = null;
         }
         feedback.className = 'show correct';
+
+        // And celebrate with some stars!
+        for( let i = 0; i < 30; i++ ) {
+            createParticle( feedback );
+        }
     }
     else if( isCorrect === false ) {
         feedback.className = 'show wrong';
@@ -747,4 +763,57 @@ function setAnswerState( ansElem, isCorrect ) {
             ansElem.className = 'wrong';
         }
     }
+}
+
+
+/**
+ * Creates a particle div (that can be styled via CSS as needed) that shoots out of a
+ * given element, e.g. to celebrate a correct answer
+ *
+ * @param {element} parent The element to shoot the particle out of
+ */
+function createParticle( parent ) {
+    const winHeight = window.innerHeight;
+    const cx = parent.clientWidth / 2;    // Centre of element width
+
+    const size = (Math.random() * 20) + 5;
+    // Place at top edge, somewhere along width
+    let x = (Math.random() * parent.clientWidth) - (size / 2);
+    let y = -(size / 2);
+    let a = Math.random() * 360;
+
+    // Sideways speed based on x position - go left if on left, right if on right
+    const dx = Math.random() * ((x - cx) / 10);
+    let dy = (Math.random() * 20) + 10;
+    const da = (Math.random() * 30) - 15;
+
+    // Setup the div
+    const particle = document.createElement( 'div' );
+    particle.className = 'particle';
+    particle.style.height = `${size}px`;
+    particle.style.width = `${size}px`;
+    particle.style.top = `${y}px`;
+    particle.style.left = `${x}px`;
+    particle.style.transform = `rotate(${a}deg)`;
+
+    // Attach to element
+    parent.append( particle );
+
+    // Animate
+    const particleTimer = setInterval( () => {
+        // Update position and spin
+        x += dx;
+        y -= dy--; // Fall down
+        a += da;
+        particle.style.top = `${y}px`;
+        particle.style.left = `${x}px`;
+        particle.style.transform = `rotate(${a}deg)`;
+
+        // Off bottom of window?
+        if( y > winHeight ) {
+            // Kill and quit the animation
+            particle.remove();
+            clearInterval( particleTimer );
+        }
+    }, 1000 / 30 );
 }

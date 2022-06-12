@@ -1,7 +1,7 @@
 <!doctype html>
 
 <html>
-    
+
 <head>
     <title>DT Quizzes</title>
 
@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="css/web.css">
     <link rel="stylesheet" href="css/scratch.css">
 
-    <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>    
+    <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
     <script src="scripts/quiz.js"></script>
 </head>
 
@@ -54,20 +54,20 @@
                 <ol id="question-markers"></ol>
                 <div id="next-question"><img src="images/right.svg" alt="next icon"></div>
             </nav>
-    
+
             <section id="question-container">
                 <div id="question"></div>
                 <div id="answers"></div>
-            </section>    
+            </section>
         </article>
 
         <article id="feedback" class="hide">
-            <section id="correct">Correct. Well done!</section>
+            <section id="correct">Correct, well done!</section>
             <section id="wrong">Nope! Try again...</section>
             <section id="feedback-message"></section>
         </article>
     </main>
-        
+
     <script>initialiseQuiz();</script>
     <script>window.Prism = window.Prism || {}; window.Prism.manual = true;</script>
     <script src="scripts/prism.js"></script>

@@ -591,6 +591,24 @@ main :is(ol,ul) > li {
     right: 0.75rem;
 }
 
+#next-question.highlight {
+    animation-name: shimmy;
+    animation-duration: 250ms;
+    animation-delay: 1000ms;
+    animation-iteration-count: 3;
+    background-color: var(--accent);
+}
+
+#next-question.highlight img {
+    filter: invert();
+}
+
+@keyframes shimmy {
+    0% { transform: translateX(0); }
+   50% { transform: translateX(0.5rem); }
+  100% { transform: translateX(0); }
+}
+
 #question-markers li {
     display: none;
     position: relative;
@@ -604,7 +622,7 @@ main :is(ol,ul) > li {
 #question-markers li.end   { margin-left:  2rem; }
 
 #question-markers li.current {
-    background-color: var(--accent);
+    background-color: var(--tone-very-light);
     color: var(--tone-very-dark);
     cursor: default;
     pointer-events: none;
@@ -787,7 +805,6 @@ pre[class*=language-].line-numbers {
 #correct,
 #wrong {
     font-size: min(3rem, 8vw);
-    text-align: center;
     margin-bottom: 1.5rem;
     line-height: 1;
 }
@@ -806,6 +823,13 @@ pre[class*=language-].line-numbers {
 #feedback.wrong   #wrong,
 #feedback.show:not(.wrong) #feedback-message {
     display: block;
+}
+
+#feedback .particle {
+    display: block;
+    position: absolute;
+    background-image: url('../images/star.svg');
+    background-size: cover;
 }
 
 #answers li.wrong,
