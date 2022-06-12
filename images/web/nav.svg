@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 58 16" width="58" height="16" xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
+  <line style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round;" x1="2" y1="8" x2="13" y2="8"/>
+  <line style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round;" x1="2" y1="8" x2="8" y2="14"/>
+  <line style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round;" x1="2" y1="8" x2="8" y2="2"/>
+  <line style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round;" x1="22.983" y1="8.005" x2="32.966" y2="8" transform="matrix(-1, 0, 0, -1, 55.948998, 16.004999)"/>
+  <line style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round;" x1="28" y1="14" x2="33.983" y2="8.005" transform="matrix(-1, 0, 0, -1, 61.983003, 22.004999)"/>
+  <line style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round;" x1="28" y1="2" x2="34" y2="8" transform="matrix(-1, 0, 0, -1, 62.000001, 10)"/>
+  <path style="stroke: rgb(0, 0, 0); fill: none; stroke-linejoin: round; stroke-linecap: round;" d="M 49.622 2 C 54.238 2 57.122 7.001 54.814 11.001 C 52.505 15 46.737 15 44.43 11.001 C 42.999 8.521 43.519 5.375 45.669 3.488" transform="matrix(-0.34202, 0.939693, -0.939693, -0.34202, 74.117196, -35.897168)"/>
+  <path d="M 63.244 9.215 L 65.379 12.067 L 61.108 12.067 L 63.244 9.215 Z" style="stroke: rgb(0, 0, 0); stroke-linejoin: round; stroke-linecap: round;" transform="matrix(-0.731355, 0.681997, -0.681997, -0.731355, 107.993509, -30.22593)" bx:shape="triangle 61.108 9.215 4.271 2.852 0.5 0 1@51dbc6cd" bx:origin="0.331 0.609"/>
+</svg>

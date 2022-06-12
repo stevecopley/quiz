@@ -13,7 +13,8 @@
         "HTML 2: Blocks": "html/blocks.md"
     },
     "CSS Quizzes": {
-        "CSS 1: Basics": "css/basics.md",
-        "CSS 2: Layout": "css/variables.md"
+        "CSS 1: Basics":  "css/basics.md",
+        "CSS 2: Layout":  "css/variables.md",
+        "CSS 3: FlexBox": "css/flexbox.md"
     }
 }

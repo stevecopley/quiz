@@ -456,14 +456,8 @@ function showQuestion( qNum ) {
     answBlock.innerHTML = question.answersMD  ? converter.makeHtml( question.answersMD )  : '';
     message.innerHTML   = question.feedbackMD ? converter.makeHtml( question.feedbackMD ) : '';
 
-    // Sort out the syntax highlighting for inline as well as blocks of code
-    const codeBlocks = document.querySelectorAll( 'code' );
-    codeBlocks.forEach( block => {
-        block.classList.add( quiz.language );
-        block.classList.add( 'language-' + quiz.language );
-    } );
-    Prism.highlightAll();
-    if( quiz.language == 'scratch' ) Scratch.highlightAll();
+    // Code syntax highlighting
+    processCodeBlocks( [quesBlock, answBlock, message] );
 
     // Add event handlers to answers, but not for intro (qNum 0)
     if( qNum > 0 ) {
@@ -498,6 +492,29 @@ function showQuestion( qNum ) {
     sessionStorage.setItem( 'currentQuestion', qNum );
 }
 
+/**
+ * Use Prism syntax highlighting for code blocks with some tweaks to enable
+ * line highlighting, etc.
+ */
+function processCodeBlocks( blocks ) {
+    // Sort out the syntax highlighting for inline as well as blocks of code
+    const codeBlocks = document.querySelectorAll( 'code' );
+    codeBlocks.forEach( block => {
+        block.classList.add( quiz.language );
+        block.classList.add( 'language-' + quiz.language );
+    } );
+
+    blocks.forEach( block => {
+        let blockHTML = block.innerHTML;
+        // Look for [#nnn] blocks above <pre> code blocks
+        blockHTML = blockHTML.replace( /<p>\[#([0-9\-]+)\]<\/p>[\n]?<pre>/g, 
+                                       `<pre class="line-numbers" data-line="$1">` );
+        block.innerHTML = blockHTML;
+    } );
+
+    Prism.highlightAll();
+    if( quiz.language == 'scratch' ) Scratch.highlightAll();
+}
 
 /**
  * Create objects in the session to track question progress so far. Existing records

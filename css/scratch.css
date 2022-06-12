@@ -69,12 +69,13 @@ code.language-scratch,
 :not(pre) > code.language-scratch {
     background: none;
     border: none;
-    padding: 0 0 0.4rem;
-    margin: 0 0.5rem;
+    padding: 0;
+    margin: 0.3rem 0.5rem;
     line-height: 1.1;
     vertical-align: bottom;
     font-size: 0.8rem;
 }
+
 
 
 /*** STAGE **********************************************************/

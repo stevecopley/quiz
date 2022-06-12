@@ -1,0 +1,167 @@
+/*** RESET TO TYPICAL BROWSER DEFAULTS *********************************/
+
+
+.webview {
+    display: block;
+    padding: 0.4rem;
+
+    background-color: #fff;
+    color: #000;
+
+    font-family: serif;
+    font-size: 20px;
+    line-height: 1.2;
+}
+
+.webview * {
+    all: revert;
+
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
+    background: none;
+}
+
+.webview :is(
+    header,
+    footer,
+    main,
+    article,
+    section,
+    aside,
+    div,
+    h1, h2, h3, h4, h5, h6,
+    p,
+    ul, ol, li) {
+    display: block;
+}
+
+.webview :is(p, ul, ol) {
+    margin: 1em 0;
+}
+
+.webview :is(ul, ol) {
+    padding-left: 40px;
+}
+
+.webview ul {
+    list-style: disc;
+}
+
+.webview ol {
+    list-style: decimal;
+}
+
+.webview li {
+    display: list-item;
+    text-align: match-parent;
+}
+
+.webview :is(h1, h2, h3, h4, h5, h6) {
+    font-weight: bold;
+}
+
+.webview h1 { font-size: 2.00em; margin: 0.67em 0; }
+.webview h2 { font-size: 1.50em; margin: 0.83em 0; }
+.webview h3 { font-size: 1.17em; margin: 1.00em 0; }
+.webview h4 { font-size: 1.00em; margin: 1.33em 0; }
+.webview h5 { font-size: 0.83em; margin: 1.67em 0; }
+.webview h6 { font-size: 0.67em; margin: 2.33em 0; }
+
+.webview a {
+    color: #00e;
+    text-decoration: underline;
+    cursor: pointer;
+    pointer-events: none;
+}
+
+.webview table {
+    box-sizing: border-box;
+    border-spacing: 2px;
+    border-collapse: separate;
+    text-indent: initial;
+    border-color: gray;
+}
+
+.webview :is( thead, tbody, tfoot ) {
+    vertical-align: middle;
+    border-color: inherit;
+}
+
+.webview :is( tr, th, td ) {
+    border-color: inherit;
+    vertical-align: inherit;
+}
+
+.webview th, td {
+    padding: 1px;
+}
+
+.webview th {
+    font-weight: bold;
+}
+
+/*** FRAME ***************************************/
+
+.webview {
+    --frame-col: #a7abb7;
+    --frame-tab: #fff8;
+    --frame-border: #0006;
+    --frame-url: #fff;
+    --frame-title: #000c;
+    --frame-radius: 0.25rem;
+    --frame-bar: 2rem;
+
+    min-height: 20rem;
+    position: relative;
+    margin: calc(var(--frame-bar) + 1rem) 0 1rem;
+    border: 2px solid var(--frame-col);
+    border-radius: 0 0 var(--frame-radius) var(--frame-radius);
+    box-shadow: 0 0.1rem 0.3rem #0008;
+}
+
+.webview::before {
+    content: url('../images/web/controls.svg');
+    padding: 0.35rem 0.5rem;
+    text-align: right;
+    position: absolute;
+    bottom: 100%;
+    left: -2px;
+    right: -2px;
+    height: var(--frame-bar);
+    border-radius: var(--frame-radius)  var(--frame-radius) 0 0;
+    border-bottom: 1px solid var(--frame-border);
+    background-color: var(--frame-col);
+}
+
+.webview::after {
+    content: url('../images/web/nav.svg');
+    position: absolute;
+    bottom: calc(100% + 0.15rem);
+    left: 0.5rem;
+}
+
+.webview title {
+    position: absolute;
+    left: 5rem;
+    bottom: calc(100% + 1px);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: system-ui, sans-serif;
+    line-height: 1;
+    font-size: 0.9rem;
+    padding: 0.3rem 0.7rem 0.2rem;
+    border: 1px solid var(--frame-border);
+    border-bottom: none;
+    color: var(--frame-title);
+    background-color: var(--frame-tab);
+    border-radius: 0.5rem 0.5rem 0 0;
+    z-index: 1;
+}
+
+.webview title::before {
+    content: url('../images/web/tab.svg');
+}
+
