@@ -796,11 +796,39 @@ pre[class*=language-].line-numbers {
     min-width: 20rem;
     max-width: 45rem;
     margin: 0 auto;
-    transition: bottom 250ms;
 }
 
-#feedback.hide { bottom: -20rem; }
-#feedback.show { bottom: -1rem; }
+#feedback.hide { 
+    bottom: -20rem; 
+}
+
+#feedback.show { 
+    animation: 750ms ease slide-up-and-bounce;
+}
+
+#feedback.wrong.show { 
+    animation: 1000ms ease slide-up-and-shake;
+}
+
+@keyframes slide-up-and-bounce {
+    0% { bottom: -20rem; }
+   40% { bottom: -0.5rem; }
+   60% { bottom: -1.5rem; }
+   80% { bottom: -0.75rem; }
+  100% { bottom: -1rem; }
+}
+
+@keyframes slide-up-and-shake {
+    0% { bottom: -20rem; }
+   20% { bottom: -0.5rem; }
+   40% { bottom: -1rem; }
+   50% { bottom: -1rem; transform: translatex(0); }
+   60% { bottom: -1rem; transform: translatex(-1rem); }
+   70% { bottom: -1rem; transform: translatex(1rem); }
+   80% { bottom: -1rem; transform: translatex(-1rem); }
+   90% { bottom: -1rem; transform: translatex(1rem); }
+  100% { bottom: -1rem; transform: translatex(0); }
+}
 
 #correct,
 #wrong {
@@ -820,7 +848,23 @@ pre[class*=language-].line-numbers {
 }
 
 #feedback.correct #correct,
-#feedback.wrong   #wrong,
+#feedback.wrong   #wrong {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#feedback.correct #correct::after,
+#feedback.wrong   #wrong::after {
+    content: ''; 
+    width: min(3rem, 8vw);
+    height: min(3rem, 8vw);
+    background-size: cover; 
+}
+
+#feedback.correct #correct::after { background-image: url('../images/correct.svg'); }
+#feedback.wrong   #wrong::after   { background-image: url('../images/wrong.svg'); }
+
 #feedback.show:not(.wrong) #feedback-message {
     display: block;
 }
@@ -853,5 +897,5 @@ pre[class*=language-].line-numbers {
     right: -0.75rem;
 }
 
-#answers li.wrong::after   { content : url('../images/wrong.svg'); }
-#answers li.correct::after { content : url('../images/correct.svg'); }
+#answers li.wrong::after   { content: url('../images/wrong.svg'); }
+#answers li.correct::after { content: url('../images/correct.svg'); }
