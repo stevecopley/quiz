@@ -392,17 +392,19 @@ function buildQuestionNav() {
         if( i > 0 ) updateQuestionStars( i );
     }
 
-    // Link to go to previous question
+    // Link to go to previous question and doc swipe handler
     const prevIndicator = document.getElementById( 'prev-question' );
     if( prevIndicator.getAttribute( 'hasListener' ) != 'true' ) {
-        prevIndicator.addEventListener( 'click', () => { showQuestionWithOffset( -1 ); } );
+        prevIndicator.addEventListener( 'click',   () => { showQuestionWithOffset( -1 ); } );
+        document.addEventListener( 'swiped-right', () => { showQuestionWithOffset( -1 ); } );
         prevIndicator.setAttribute( 'hasListener', 'true' );
     }
 
-    // Link to go to next question
+    // Link to go to next question and doc swipe handler
     const nextIndicator = document.getElementById( 'next-question' );
     if( nextIndicator.getAttribute( 'hasListener' ) != 'true' ) {
-        nextIndicator.addEventListener( 'click', () => { showQuestionWithOffset( 1 ); } );
+        nextIndicator.addEventListener( 'click',  () => { showQuestionWithOffset( 1 ); } );
+        document.addEventListener( 'swiped-left', () => { showQuestionWithOffset( 1 ); } );
         nextIndicator.setAttribute( 'hasListener', 'true' );
     }
 }
@@ -721,11 +723,8 @@ function showFeedback( isCorrect=null ) {
             feedbackTimeout = null;
         }
         feedback.className = 'show correct';
-
         // And celebrate with some stars!
-        for( let i = 0; i < 30; i++ ) {
-            createParticle( feedback );
-        }
+        showStarShower( feedback );
     }
     else if( isCorrect === false ) {
         feedback.className = 'show wrong';
@@ -763,6 +762,20 @@ function setAnswerState( ansElem, isCorrect ) {
             ansElem.className = 'wrong';
         }
     }
+}
+
+
+/**
+ * Show a bunch of star particles coing from the correct answer
+ * feedback panel, after a short delay to allow of the panel to
+ * animate in
+ */
+function showStarShower( panel ) {
+    setTimeout( () => {
+        for( let i = 0; i < 30; i++ ) {
+            createParticle( panel );
+        }
+    }, 500 );
 }
 
 
