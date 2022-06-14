@@ -274,6 +274,13 @@ async function loadQuiz( url ) {
     // And show the relevant question (continuing where we left off if saved)
     const currentQuestion = sessionStorage.getItem( 'currentQuestion' );
     showQuestion( currentQuestion !== null ? currentQuestion : 0 );
+
+    // Finally, scroll to the top
+    window.scroll( {
+        top:  0,
+        left: 0,
+        behavior: 'smooth'
+    } );
 }
 
 
