@@ -1,0 +1,16 @@
+code.language-pseudo {
+    --term-col:     #ff8a65;
+    --action-col:   #4fc3f7;
+    --decision-col: #aed581;
+    --loop-col:     var(--decision-col);
+    --input-col:    var(--action-col);
+    --output-col:   var(--action-col);
+}
+
+code.language-pseudo .block    { color: var(--term-col); }
+code.language-pseudo .action   { color: var(--action-col); }
+code.language-pseudo .decision { color: var(--decision-col); }
+code.language-pseudo .loop     { color: var(--loop-col); }
+code.language-pseudo .input    { color: var(--input-col); }
+code.language-pseudo .output   { color: var(--output-col); }
+

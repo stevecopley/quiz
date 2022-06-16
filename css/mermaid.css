@@ -1,0 +1,218 @@
+pre.language-mermaid,
+code.language-mermaid,
+:not(pre) > code.language-mermaid {
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.mermaid-graph {
+    --font-family: system-ui, Helvetica, Arial, sans-serif;
+
+    --node-back:   #4fc3f7;
+    --node-border: #0288d1;
+    --term-back:   #ff8a65;
+    --term-border: #e64a19;
+    --deci-back:   #aed581;
+    --deci-border: #689f38;
+    --join-back:   #fff176;
+    --join-border: #fdd835;
+    --data-back:   #ba68c8;
+    --data-border: #7b1fa2;
+
+    --node-text:   #000;
+
+    --line-col:    #ffeb3b;
+    --label-text:  #000;
+    --label-back:  var(--line-col);
+
+    --tone-light:  #eee;
+    --tone-dark:   #111;
+
+    --line-normal: 2.5px;
+    --line-thick:  5px;
+
+    font-family: var(--font-family);
+    font-size: 1em;
+    line-height: 1.5;
+}
+
+.mermaid-graph svg {
+    font-family: var(--font-family);
+    font-size: 1em;
+}
+
+
+/*** ERROR ***************************************************/
+
+.mermaid-graph .error-icon {
+    fill: var(--tone-light);
+}
+
+.mermaid-graph .error-text {
+    fill: var(--tone-dark);
+    stroke: var(--tone-dark);
+}
+
+
+.mermaid-graph .marker {
+    fill: var(--node-back);
+    stroke: var(--node-back);
+}
+
+.mermaid-graph .marker.cross {
+    stroke: var(--node-back);
+}
+
+
+/*** BLOCKS ***************************************************/
+
+.mermaid-graph .node rect,
+.mermaid-graph .node circle,
+.mermaid-graph .node ellipse,
+.mermaid-graph .node polygon,
+.mermaid-graph .node path {
+    fill: var(--node-back);
+    stroke: var(--node-border);
+    stroke-width: var(--line-normal);
+}
+
+/* Plain rectangles */
+.mermaid-graph .node rect[rx="0"] {
+    fill: var(--node-back);
+    stroke: var(--node-border);
+}
+
+/* Rounded rectangles */
+.mermaid-graph .node rect:not([rx="0"]) {
+    fill: var(--term-back);
+    stroke: var(--term-border);
+}
+
+/* Questions */
+.mermaid-graph .node polygon {
+    fill: var(--deci-back);
+    stroke: var(--deci-border);
+}
+
+/* Joining link nodes */
+.mermaid-graph .node circle {
+    fill: var(--join-back);
+    stroke: var(--join-border);
+}
+
+/* Database */
+.mermaid-graph .node path {
+    fill: var(--data-back);
+    stroke: var(--data-border);
+}
+
+.mermaid-graph .node .label {
+    text-align: center;
+}
+
+.mermaid-graph .label {
+    font-family: var(--font-family);
+    color: var(--node-text);
+}
+
+.mermaid-graph .label text,
+.mermaid-graph span {
+    fill: var(--node-text);
+    color: var(--node-text);
+}
+
+
+/*** LINES ***************************************************/
+
+.mermaid-graph .edgePath .path {
+    stroke: var(--line-col);
+    stroke-width: var(--line-normal);
+}
+
+.mermaid-graph .arrowheadPath {
+    fill: var(--line-col);
+}
+
+.mermaid-graph .edge-thickness-normal { stroke-width: var(--line-normal); }
+.mermaid-graph .edge-thickness-thick  { stroke-width: var(--line-thick); }
+
+.mermaid-graph .edge-pattern-solid  { stroke-dasharray: 0; }
+.mermaid-graph .edge-pattern-dashed { stroke-dasharray: 3; }
+.mermaid-graph .edge-pattern-dotted { stroke-dasharray: 2; }
+
+
+/*** LINE LABELS ***************************************************/
+
+.mermaid-graph .edgeLabel {
+    text-align: center;
+    color: var(--label-text);
+    font-weight: bold;
+}
+
+.mermaid-graph .edgeLabel rect {
+    background-color: var(--label-back);
+    outline: 5px solid var(--label-back);
+    outline-offset: -1px;
+    fill: var(--label-back);
+    border-radius: 0.2em;
+}
+
+
+/*** LINKS ***************************************************/
+
+.mermaid-graph .flowchart-link {
+    stroke: var(--node-text);
+    fill: none;
+}
+
+.mermaid-graph .node.clickable {
+    cursor:pointer;
+}
+
+
+/*** GROUPS ***************************************************/
+
+.mermaid-graph .cluster rect {
+    fill: var(--tone-light);
+    stroke: var(--tone-light);
+    stroke-width: var(--line-normal);
+}
+
+.mermaid-graph .cluster-label text {
+    fill: var(--tone-dark);
+}
+
+.mermaid-graph .cluster-label span {
+    color: var(--tone-dark);
+}
+
+.mermaid-graph .cluster text {
+    fill: var(--tone-dark);
+}
+
+.mermaid-graph .cluster span {
+    color: var(--tone-dark);
+}
+
+
+/*** MISC ***************************************************/
+
+.mermaid-graph div.mermaidTooltip {
+    position: absolute;
+    text-align: center;
+    max-width: 12em;
+    padding: 0.25em;
+    font-family: var(--font-family);
+    font-size: 0.8em;
+    background: var(--tone-light);
+    border: 1px solid undefined;
+    border-radius: 0.25em;
+    pointer-events: none;
+    z-index: 100;
+}
+
+.mermaid-graph :root {
+    --mermaid-font-family: var(--font-family);
+}
+

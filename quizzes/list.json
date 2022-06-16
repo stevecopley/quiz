@@ -1,18 +1,21 @@
 {
-    "Scratch Quizzes": {
+    "Algorithms": {
+        "Algorithms 1: Basics": "algos/basics.md"
+    },
+    "Scratch": {
         "Scratch 1: Movement": "scratch/movement.md"
     },
-    "Python Quizzes": {
+    "Python": {
         "Python 1: Input and Output": "python/inout.md",
         "Python 2: Variables": "python/variables.md",
         "Python 3: Branching": "python/branching.md",
         "Python 4: Looping": "python/loops.md"
     },
-    "HTML Quizzes": {
+    "HTML": {
         "HTML 1: Basics": "html/basics.md",
         "HTML 2: Blocks": "html/blocks.md"
     },
-    "CSS Quizzes": {
+    "CSS": {
         "CSS 1: Basics":  "css/basics.md",
         "CSS 2: Layout":  "css/variables.md",
         "CSS 3: FlexBox": "css/flexbox.md"

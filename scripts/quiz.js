@@ -12,9 +12,15 @@ let quiz = {
 // For tracking a timeout when needed
 let feedbackTimeout = null;
 
-// Showdown library options and convertor object
-showdown.setOption( 'customizedHeaderId', true );
-const converter = new showdown.Converter();
+// Setup the mermaid graph rendering API
+mermaid.mermaidAPI.initialize( {
+    startOnLoad: false,
+    theme: 'base',
+    themeVariables: {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize:   '1.1em'
+    }
+} );
 
 
 /** ***************************************************************
@@ -232,7 +238,8 @@ async function loadQuiz( url ) {
     // First block contains our title as an H1 and other info, seperated by '--'?
     if( mdBlocks[0].trim().substring( 0, 2 ) == '# ' ) {
         const quizInfoBlock = mdBlocks.shift().trim();
-        const quizInfo = quizInfoBlock.split( '--' );
+        const quizInfo = quizInfoBlock.split( /^--$/m );
+
         // First part is an H1 and is the title
         quiz.title = quizInfo[0].trim().substring( 2 );
         // Second part is the language if relevant
@@ -245,7 +252,7 @@ async function loadQuiz( url ) {
     // Work thru the questions
     mdBlocks.forEach( block => {
         // Break up the question into parts based on '--'
-        parts = block.trim().split( '--' );
+        parts = block.trim().split( /^--$/m );
 
         // First part is always the question
         let question = { 'questionMD': parts[0].trim() };
@@ -253,7 +260,7 @@ async function loadQuiz( url ) {
         if( parts[1] ) {
             question['answersMD'] = parts[1].trim();
             // MD to HTML to be able to count the number of answers easily by no. of <li> tags
-            const questionsHTML = converter.makeHtml( question.answersMD );
+            const questionsHTML = marked.parse( question.answersMD );
             question['answerCount'] = 0;
             // Does answer have an ordered list of answers in it? If so, count the list items (assumes only a single list!)
             if( questionsHTML.includes( '<ol>' ) ) question['answerCount'] = questionsHTML.split( '<li>' ).length - 1;
@@ -461,12 +468,18 @@ function showQuestion( qNum ) {
     const question = quiz.questions[qNum];
 
     // Show it to the user
-    quesBlock.innerHTML = question.questionMD ? converter.makeHtml( question.questionMD ) : 'MISSING QUESTION TEXT';
-    answBlock.innerHTML = question.answersMD  ? converter.makeHtml( question.answersMD )  : '';
-    message.innerHTML   = question.feedbackMD ? converter.makeHtml( question.feedbackMD ) : '';
+    quesBlock.innerHTML = question.questionMD ? marked.parse( question.questionMD ) : 'MISSING QUESTION TEXT';
+    answBlock.innerHTML = question.answersMD  ? marked.parse( question.answersMD )  : '';
+    message.innerHTML   = question.feedbackMD ? marked.parse( question.feedbackMD ) : '';
+
+    var insertSvg = function(svgCode, bindFunctions) {
+        element.innerHTML = svgCode;
+    };
 
     // Code syntax highlighting
     processCodeBlocks( [quesBlock, answBlock, message] );
+    // Diagrams too
+    processGraphBlocks( [quesBlock, answBlock, message] );
 
     // Add event handlers to answers, but not for intro (qNum 0)
     if( qNum > 0 ) {
@@ -504,15 +517,22 @@ function showQuestion( qNum ) {
 /**
  * Use Prism syntax highlighting for code blocks with some tweaks to enable
  * line highlighting, etc.
+ *
+ * @param {array of elements} blocks
  */
-function processCodeBlocks( blocks ) {
+ function processCodeBlocks( blocks ) {
     // Sort out the syntax highlighting for inline as well as blocks of code
     const codeBlocks = document.querySelectorAll( 'code' );
     codeBlocks.forEach( block => {
-        block.classList.add( quiz.language );
-        block.classList.add( 'language-' + quiz.language );
+        const parentTag = block.parentElement.tagName;
+        // Only non-block code needs classes adding
+        if( parentTag != 'PRE' ) {
+            block.classList.add( quiz.language );
+            block.classList.add( 'language-' + quiz.language );
+        }
     } );
 
+    // Allow for line highlighting via [#nnn-mmm] code prior to MD code block
     blocks.forEach( block => {
         let blockHTML = block.innerHTML;
         // Look for [#nnn] blocks above <pre> code blocks
@@ -521,8 +541,54 @@ function processCodeBlocks( blocks ) {
         block.innerHTML = blockHTML;
     } );
 
+    // Colour code
     Prism.highlightAll();
+    // Build Scratch blocks
     if( quiz.language == 'scratch' ) Scratch.highlightAll();
+    // Attempt to colour pseuocode
+    if( quiz.language == 'mermaid' || quiz.language == 'pseudo' ) Pseudo.highlightAll();
+}
+
+/**
+ * Generate mermaid diagrams for any lang-mermaid blocks. Also, post-generation,
+ * alter the diagram SVG to allow styling via an external stylesheet
+ *
+ * @param {array of elements} blocks
+ */
+function processGraphBlocks( blocks ) {
+    // Get the relevant code blocks
+    const graphBlocks = document.querySelectorAll( 'code.language-mermaid' );
+
+    // Work thru them all
+    let i = 0;
+    graphBlocks.forEach( block => {
+        // Grab the code for the graph
+        const graphDef = block.innerText;
+        // New div, should be used to render to, but doesn't seem to show up, or gets
+        // deleted by the mermaid render call ???
+        const graphDiv = document.createElement( 'div' );
+        graphDiv.id = 'mermaid-block-' + i++;
+
+        // Render the graph and place the resulting SVG into the
+        const graph = mermaid.mermaidAPI.render(
+            graphDiv.id,
+            graphDef,
+            (svg, bindFunctions) => {
+                // Add in the SVG code
+                block.innerHTML = svg;
+                // Get the resulting SVG DOM node
+                const svgBlock = block.children.item( 0 );
+                // Remove any id (as we want to style via CSS) All of the styles within
+                // the SVG will be ignored since they are tied to the id
+                svgBlock.id = '';
+                // All the same, remove the internal styles
+                const internalCSS = svgBlock.querySelector( 'style' );
+                if( internalCSS ) internalCSS.remove();
+                // Add in a class for CSS styling via a stylesheet
+                svgBlock.setAttribute( 'class', 'mermaid-graph' );
+        } );
+
+    } );
 }
 
 /**
