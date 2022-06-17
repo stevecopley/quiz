@@ -10,6 +10,10 @@ Syntax-highlighted code snippets within questions and answers were one of the mo
 
 ![Quiz intro](ui/quiz-intro.png)
 
+Pseudocode has a limited form of syntax colouring, and flowcharts can be displayed via the [Mermaid library](https://github.com/mermaid-js/mermaid) (see example quizzes and the [Mermaid docs](https://mermaid-js.github.io/mermaid/#/n00b-gettingStarted) for the syntax):
+
+![Quiz intro](ui/quiz-pseudo.png)
+
 The quiz works well on mobile devices too, allowing students to revise when away from a computer.
 
 ![Quiz intro](ui/quiz-question-mobile.png)
