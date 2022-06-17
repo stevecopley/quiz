@@ -74,7 +74,7 @@ a:hover {
     text-decoration: underline;
 }
 
-a.button {
+.button {
     display: inline-block;
     background: var(--accent);
     color: var(--tone-very-dark);
@@ -82,16 +82,20 @@ a.button {
     border-radius: 0.3rem;
 }
 
-a.button.low {
+.button.low {
     background-color: var(--accent-low);
 }
 
-a.button:hover,
-a.button.low:hover {
+.button:hover,
+.button.low:hover {
     background: var(--tone-very-light);
     text-decoration: none;
+    cursor: pointer;
 }
 
+.button:hover img {
+    filter: invert();
+}
 
 
 /*** HEADER *******************************************************/
@@ -407,7 +411,7 @@ main :is(ol,ul) > li {
     justify-content: space-between;
     border: 2px solid var(--tone-mid);
     border-radius: 0.5rem;
-    padding: 0.5rem 0.75rem 1rem;
+    padding: 0.5rem 0.75rem;
     background-color: var(--tone-very-dark);
     cursor: pointer;
 }
@@ -430,14 +434,33 @@ main :is(ol,ul) > li {
     margin: 0;
     min-width: 2.5em;
     text-align: right;
+    flex: 1;
+}
+
+.overview-list > li > .clear-quiz {
+    order: 3;
+    padding: 0;
+    background-color: var(--tone-dark);
+}
+
+.overview-list > li:hover > .clear-quiz {
+    background-color: var(--accent);
+}
+
+.overview-list > li:hover > .clear-quiz:hover {
+    background-color: var(--tone-very-light);
+}
+
+.overview-list > li > .clear-quiz img {
+    filter: invert();
 }
 
 /* Answer markers */
 .overview-list ol {
-    order: 3;
+    order: 9;
     width: 100%;
     list-style: none;
-    padding: 0 0 0 1rem;
+    padding: 0 0 0.25rem 1rem;
     display: flex;
     justify-content: flex-end;
     gap: 0.75rem;
@@ -465,6 +488,10 @@ main :is(ol,ul) > li {
 }
 
 @media screen and (min-width: 45rem) {
+    .overview-list > li > p.score {
+        flex: 0;
+    }
+
     .overview-list ol {
         order: 1;
         width: auto;
@@ -485,8 +512,9 @@ main :is(ol,ul) > li {
 }
 
 #clear-all {
-    padding-top: 1rem;
-    text-align: right;
+    margin-left: auto;
+    display: block;
+    width: fit-content;
 }
 
 
@@ -788,6 +816,10 @@ main :is(ol,ul) > li {
     box-shadow: var(--shadow-small);
 }
 
+#answers > ol > li * {
+    pointer-events: none;
+}
+
 
 /*** CODE BLOCKS *******************************************************/
 
@@ -959,6 +991,7 @@ pre[class*=language-].line-numbers {
     line-height: 1;
     position: absolute;
     right: -0.75rem;
+    top: 0.85rem;
 }
 
 #answers li.wrong::after   { content: url('../images/wrong.svg'); }

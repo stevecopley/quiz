@@ -69,7 +69,7 @@ endstage
 
 1.  This code...
 
-    ```
+    ```scratch
     onflag
     goto (-100) (-100)
     goto (-100) (100)
@@ -79,7 +79,7 @@ endstage
 
 2.  This code...
 
-    ```
+    ```scratch
     onflag
     goto (-100) (-100)
     goto (100) (100)

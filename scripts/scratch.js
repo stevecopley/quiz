@@ -115,15 +115,12 @@ var Scratch = (function (_self) {
         highlightLine: function ( line ) {
             // Tokenise the line of code into a tree
             const tokens = _.parseLine( line );
-            // console.log( tokens );
             // Expand into HTML code
             let code = _.expandCommand( tokens );
-            // console.log( code );
             // Sort out colours to have actual colour from the value
             code = _.processColours( code );
             // Sort out variable styling, using %....% to identify them from normal value
             code = _.processVariables( code );
-            // console.log( code );
 
             return code;
         },
@@ -147,9 +144,6 @@ var Scratch = (function (_self) {
             const groupStarters = '([{';
             const groupEndings  = ')]}';
 
-            console.log( '>>>' );
-            console.log( line );
-
             let token = {
                 op: null,
                 args: []
@@ -166,7 +160,6 @@ var Scratch = (function (_self) {
                 if( line.includes( starter ) ) groupings = true;
             } );
             if( !groupings ) {
-                console.log( '*** no more groups' );
                 token.op = line;
                 return token;
             }
@@ -201,8 +194,6 @@ var Scratch = (function (_self) {
                     }
                 }
             } );
-
-            console.log( token );
 
             return token;
         },

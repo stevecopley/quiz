@@ -1,3 +1,5 @@
+const mainHeading = 'DT Quizzes';
+
 // Holds the list of quizzes read from the config file
 let quizzes = null;
 
@@ -32,6 +34,9 @@ async function initialiseQuiz() {
     const overview = document.getElementById( 'overview-link' );
     heading.addEventListener( 'click', showOverview );
     overview.addEventListener( 'click', showOverview );
+
+    document.title = mainHeading;
+    heading.innerHTML = mainHeading;
 
     await loadQuizList();
 
@@ -92,7 +97,7 @@ async function initialiseQuiz() {
  * current session
  */
 function showOverview() {
-    const title = document.getElementById( 'title' );
+    const title     = document.getElementById( 'title' );
     const infoBlock = document.getElementById( 'info' );
     const overBlock = document.getElementById( 'overview' );
     const quizBlock = document.getElementById( 'quiz' );
@@ -100,6 +105,7 @@ function showOverview() {
 
     // Setup UI
     closeMenu();
+    document.title = mainHeading;
     title.innerHTML = 'Quiz Overview';
     infoBlock.className = 'show';
     overBlock.className = 'show';
@@ -162,10 +168,11 @@ function showOverview() {
                         starBlock.classList.add( 'has' + numStars );
                         questionItem.appendChild( starBlock );
                         // Can click directly to that question
-                        questionItem.addEventListener( 'click', () => {
+                        questionItem.addEventListener( 'click', (e) => {
                             sessionStorage.setItem( 'currentQuestion', qNum );
                             loadQuiz( quizURL );
-                        }, true );
+                            e.stopPropagation();
+                        } );
                         questionList.appendChild( questionItem );
                     } );
 
@@ -174,6 +181,18 @@ function showOverview() {
                     score.className = 'score';
                     score.innerText = `${Math.round( totalStars * 100 / maxStars )}%`;
                     quizItem.appendChild( score );
+
+                    // Add a clear quiz button
+                    const clearDiv = document.createElement( 'div' );
+                    clearDiv.className = 'clear-quiz button low';
+                    clearDiv.innerHTML = '<img src="images/close.svg" alt="clear quiz icon">';
+                    clearDiv.addEventListener( 'click', (e) => {
+                        delete( progress[quizURL] );
+                        sessionStorage.setItem( 'progress', JSON.stringify( progress ) );
+                        showOverview();
+                        e.stopPropagation();
+                    } );
+                    quizItem.appendChild( clearDiv );
                 }
                 else {
                     // nope... no attempt made so far
@@ -186,25 +205,25 @@ function showOverview() {
                 quizItem.addEventListener( 'click', () => {
                     sessionStorage.setItem( 'currentQuestion', 0 );
                     loadQuiz( quizURL );
-                }, true );
+                } );
                 quizTypeList.appendChild( quizItem );
             } );
         }
     } );
 
     // Link to clear all progress in all quizzes
-    const clearBlock = document.createElement( 'p' );
+    const clearBlock = document.createElement( 'div' );
     clearBlock.id = 'clear-all';
-    const clearLink = document.createElement( 'a' );
-    clearLink.innerText = 'Clear Progess in All Quizzes';
-    clearLink.href = '#';
-    clearLink.className= 'button low';
-    clearLink.addEventListener( 'click', () => {
+    clearBlock.innerText = 'Clear Progess in All Quizzes';
+    clearBlock.className= 'button low';
+    clearBlock.addEventListener( 'click', () => {
         sessionStorage.clear();
         initialiseQuiz();
-    }, true );
-    clearBlock.appendChild( clearLink );
+    } );
     overBlock.appendChild( clearBlock );
+
+    // Finally, scroll to the top
+    window.scroll( { top:  0, left: 0, behavior: 'smooth' } );
 }
 
 
@@ -246,6 +265,7 @@ async function loadQuiz( url ) {
         if( quizInfo[1] ) quiz.language = quizInfo[1].trim();
     }
 
+    document.title = `${mainHeading} - ${quiz.title}`;
     title.innerHTML = quiz.title;
     quiz.questions = [];
 
@@ -283,11 +303,7 @@ async function loadQuiz( url ) {
     showQuestion( currentQuestion !== null ? currentQuestion : 0 );
 
     // Finally, scroll to the top
-    window.scroll( {
-        top:  0,
-        left: 0,
-        behavior: 'smooth'
-    } );
+    window.scroll( { top:  0, left: 0, behavior: 'smooth' } );
 }
 
 
@@ -384,9 +400,7 @@ function buildQuestionNav() {
 
         if( i == 0 ) {
             // This is the intro, so we have an icon
-            const icon = document.createElement( 'img' );
-            icon.src = 'images/info.svg';
-            questionIndicator.appendChild( icon );
+            questionIndicator.innerHTML = '<img src="images/info.svg" alt="quiz info icon">';
         }
         else {
             // An actual question, so show the number
@@ -762,6 +776,8 @@ function updateQuestionStars( qNum ) {
  * @param {boolean} isCorrect true if correct, false otherwise
  */
  function markAnswer( e, qNum, isCorrect ) {
+    console.log( e.target );
+
     showFeedback( isCorrect );
     setAnswerState( e.target, isCorrect );
 
