@@ -469,11 +469,11 @@ main :is(ol,ul) > li {
 .overview-list ol > li {
     margin: 0;
     display: flex;
-    width: 1.5em;
-    height: 1.5em;
+    width: 1.7em;
+    height: 1.7em;
     align-items: center;
     justify-content: center;
-    line-height: 1;
+    line-height: 1.2;
     position: relative;
     border-radius: 5rem;
     border: 2px solid var(--tone-light);

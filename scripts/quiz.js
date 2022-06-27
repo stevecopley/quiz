@@ -469,8 +469,8 @@ function showQuestion( qNum ) {
     const quizBlock = document.getElementById( 'quiz' );
     const quesBlock = document.getElementById( 'question' );
     const answBlock = document.getElementById( 'answers' );
-    const feedback = document.getElementById( 'feedback' );
-    const message  = document.getElementById( 'feedback-message' );
+    const feedback  = document.getElementById( 'feedback' );
+    const message   = document.getElementById( 'feedback-message' );
 
     quizBlock.className = 'show';
     feedback.className = 'hide';
@@ -776,8 +776,6 @@ function updateQuestionStars( qNum ) {
  * @param {boolean} isCorrect true if correct, false otherwise
  */
  function markAnswer( e, qNum, isCorrect ) {
-    console.log( e.target );
-
     showFeedback( isCorrect );
     setAnswerState( e.target, isCorrect );
 
@@ -804,7 +802,10 @@ function updateQuestionStars( qNum ) {
  * @param {boolean / null} isCorrect null for non-themed feedback, true/false otherwise
  */
 function showFeedback( isCorrect=null ) {
+    const main     = document.getElementById( 'main-content' );
     const feedback = document.getElementById( 'feedback' );
+    const answers  = document.getElementById( 'answers' );
+    const progress = document.getElementById( 'progress' );
 
     if( isCorrect === true ) {
         if( feedbackTimeout ) {
@@ -823,9 +824,15 @@ function showFeedback( isCorrect=null ) {
         feedback.className = 'show';
     }
 
-    if( feedback.getAttribute( 'hasListener' ) != 'true' ) {
-        feedback.addEventListener( 'click', () => { feedback.className = 'hide'; } );
-        feedback.setAttribute( 'hasListener', 'true' );
+    // Add an event listener on main to close a feedback pain if open
+    if( main.getAttribute( 'hasListener' ) != 'true' ) {
+        main.addEventListener( 'click', (e) => {
+            // Only close if we weren't nav'ing or answering a ques.
+            if( !e.composedPath().includes( answers ) && !e.composedPath().includes( progress ) ) {
+                feedback.className = 'hide';
+            }
+        } );
+        main.setAttribute( 'hasListener', 'true' );
     }
 }
 

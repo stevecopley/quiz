@@ -60,7 +60,7 @@ var Pseudo = (function (_self) {
                 case 'get':
                 case 'ask':
                     return 'input';
-        
+
                 case 'is':
                 case 'if':
                 case 'else':
@@ -76,7 +76,7 @@ var Pseudo = (function (_self) {
                 case 'endrepeat':
                 case 'endwhile':
                     return 'loop';
-            } 
+            }
 
             return 'action';
         },
